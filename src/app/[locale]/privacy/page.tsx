@@ -1,8 +1,8 @@
 import { useTranslations } from 'next-intl'
 import { setRequestLocale } from 'next-intl/server'
 
-export default function PrivacyPage({ params }: { params: { locale: string } }) {
-  const { locale } = params;
+export default async function PrivacyPage({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
   setRequestLocale(locale);
   const t = useTranslations('Privacy')
 
