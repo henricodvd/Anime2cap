@@ -1,10 +1,9 @@
-import { useTranslations } from 'next-intl'
-import { setRequestLocale } from 'next-intl/server'
+import { getTranslations, setRequestLocale } from 'next-intl/server'
 
 export default async function TermsPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   setRequestLocale(locale);
-  const t = useTranslations('Terms')
+  const t = await getTranslations('Terms')
 
   return (
     <div className="max-w-3xl mx-auto px-6 pt-32 sm:pt-40 pb-20">

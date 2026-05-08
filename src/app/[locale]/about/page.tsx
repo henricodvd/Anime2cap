@@ -1,11 +1,10 @@
 import { BookOpen, Database, Sparkles } from 'lucide-react'
-import { useTranslations } from 'next-intl'
-import { setRequestLocale } from 'next-intl/server'
+import { getTranslations, setRequestLocale } from 'next-intl/server'
 
 export default async function AboutPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   setRequestLocale(locale);
-  const t = useTranslations('About')
+  const t = await getTranslations('About')
 
   return (
     <div className="max-w-3xl mx-auto px-6 pt-32 sm:pt-40 pb-20">
