@@ -3,25 +3,77 @@
 @tailwind utilities;
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --night: #0A0A0A;
+  --surface: #161616;
+  --paper: #F5F4F0;
+  --brand-cherry: #BE3252;
+  --canon: #1D9E75;
+  --filler: #E8A020;
+  
+  --background: var(--night);
+  --foreground: var(--paper);
+  
+  --glass-bg: rgba(255, 255, 255, 0.02);
+  --glass-border: rgba(255, 255, 255, 0.05);
 }
 
 body {
+  font-family: var(--font-body), sans-serif;
   color: var(--foreground);
   background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  min-height: 100vh;
+}
+
+h1, h2, h3, h4, h5, h6, .font-heading {
+  font-family: var(--font-heading), sans-serif;
 }
 
 @layer utilities {
   .text-balance {
     text-wrap: balance;
   }
+  
+  .glass-panel {
+    @apply bg-glass border border-glass-border backdrop-blur-xl shadow-[0_8px_24px_0_rgba(0,0,0,0.24)];
+  }
+  
+  .glass-panel-hover {
+    @apply transition-all duration-300 hover:bg-white/5 hover:border-white/20 hover:shadow-[0_8px_32px_0_rgba(190,50,82,0.15)];
+  }
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 4px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: var(--brand-cherry);
+    border-radius: 10px;
+  }
+}
+
+/* Custom Scrollbar for premium feel */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* Hide number input spinners */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type="number"] {
+  -moz-appearance: textfield;
 }

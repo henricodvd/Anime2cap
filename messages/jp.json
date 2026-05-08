@@ -1,0 +1,104 @@
+{
+  "Home": {
+    "title": "エピソードを<br></br><span>見終わりましたか？</span>",
+    "description": "現在のエピソードに対応する章を数秒で発見。<canon>キャノン</canon>は緑、<filler>フィラー</filler>は琥珀色。",
+    "tagline": "アニメとマンガの架け橋",
+    "searchPlaceholder": "お気に入りのアニメを検索...",
+    "errorSearch": "結果の取得に失敗しました。もう一度お試しください。",
+    "noResults": "このタイトルはまだマッピングされていません。英語または日本語の正式名称を試してください。",
+    "features": {
+      "mapping": "マニュアルマッピング",
+      "filler": "フィラー識別"
+    }
+  },
+  "Navbar": {
+    "searchPlaceholder": "他のアニメを検索...",
+    "noResults": "結果が見つかりません"
+  },
+  "Types": {
+    "movie": "映画",
+    "ova": "OVA",
+    "special": "スペシャル",
+    "ona": "ONA",
+    "music": "音楽",
+    "anime": "アニメ"
+  },
+  "Status": {
+    "finished": "完結",
+    "ongoing": "放送中",
+    "upcoming": "近日公開"
+  },
+  "TitlePage": {
+    "eps": "エピソード",
+    "ongoing": "放送中",
+    "score": "スコア",
+    "sourceLabel": "原作",
+    "originalWork": "オリジナル",
+    "noSynopsis": "あらすじがありません。",
+    "fillerHeader": "フィラーエピソード",
+    "readMore": "続きを読む",
+    "showLess": "閉じる"
+  },
+  "Converter": {
+    "title": "クイックコンバーター",
+    "epLabel": "アニメエピソード",
+    "capLabel": "マンガの章",
+    "placeholder": "例: 12",
+    "swapTitle": "方向を入れ替える",
+    "convertBtn": "今すぐ変換",
+    "converting": "変換中...",
+    "errorNotFound": "まだマッピングされていません。別の値を試してください！",
+    "fillerLabel": "フィラーを検出 — スキップ可能",
+    "canonLabel": "カノンエピソード",
+    "sourceLabel": "ソース"
+  },
+  "EpisodeList": {
+    "noFillers": "このアニメにはまだフィラーエピソードがマッピングされていません。カノンマラソンを楽しんでください！",
+    "tableEp": "エピソード",
+    "tableCap": "章",
+    "tableSource": "原作"
+  },
+  "About": {
+    "title": "Anime2Capについて",
+    "question": "Anime2Capは、すべてのファンが抱く疑問に答えるために存在します。",
+    "quote": "「第X話を終えました。マンガのどの章から続ければいいですか？」",
+    "description": "フォーラムで答えを探してネタバレを食らう代わりに、ここでは数秒ですべてが見つかります。私たちの目標は、メディア間の移行を正確かつ直接的に促進することです。",
+    "howItWorksTitle": "仕組み",
+    "searchTitle": "スマート検索",
+    "searchDesc": "アニメの名前を入力すると、ページをリロードせずに即座に結果が表示されます。",
+    "conversionTitle": "手動変換",
+    "conversionDesc": "エピソードと章を絶対的な精度でマッピングし、何が<canon>カノン</canon>で何が<filler>フィラー</filler>であるかを識別します。",
+    "footerNote": "私たちの焦点はあなたの体験です。専門用語や気を散らすものはありません。マンガの世界で旅を続けるために必要な情報だけを提供します。"
+  },
+  "Privacy": {
+    "title": "プライバシーポリシー",
+    "effectiveDate": "発効日: 2026年1月1日",
+    "intro": "Anime2Capでは、お客様のプライバシーを最優先事項としています。このポリシーでは、情報の取り扱いについて説明します。",
+    "sec1Title": "1. データの収集",
+    "sec1Content": "ユーザーから個人を特定できる情報（PII）は収集しません。サイトを利用するためにアカウントを作成する必要はありません。",
+    "sec2Title": "2. クッキーとトラッキング",
+    "sec2Content": "言語設定を記憶し、サイトのパフォーマンスを向上させるために、基本的なテクニカルクッキーを使用する場合があります。",
+    "sec3Title": "3. サードパーティサービス",
+    "sec3Content": "アニメデータを提供するために、サードパーティのAPI（Jikanなど）を使用しています。これらのサービスには独自のプライバシーポリシーがある場合があります。"
+  },
+  "Terms": {
+    "title": "利用規約",
+    "effectiveDate": "最終更新日: 2026年1月1日",
+    "sec1Title": "1. 規約の同意",
+    "sec1Content": "Anime2Capにアクセスすることで、これらの利用規約を遵守することに同意したことになります。",
+    "sec2Title": "2. サービスの利用",
+    "sec2Content": "サービスは「現状のまま」提供されます。Anime2Capは、外部APIから提供されるデータの不正確さについて責任を負いません。",
+    "sec3Title": "3. 知的財産",
+    "sec3Content": "Anime2Capのすべてのオリジナルコンテンツ（デザイン、ロゴ）は当社の財産です。アニメの画像や名前は、それぞれの権利所有者に帰属します。"
+  },
+  "Footer": {
+    "copyright": "© 2026 Anime2Cap",
+    "license": "アニメとマンガの架け橋。",
+    "links": {
+      "converter": "コンバーター",
+      "about": "アバウト",
+      "privacy": "プライバシー",
+      "terms": "規約"
+    }
+  }
+}

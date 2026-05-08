@@ -1,0 +1,104 @@
+{
+  "Home": {
+    "title": "Terminou o <br></br><span>episódio?</span>",
+    "description": "Descubra em segundos qual capítulo corresponde ao seu episódio atual. <canon>Canon</canon> em verde, <filler>Filler</filler> em âmbar.",
+    "tagline": "A ponte entre o anime e o mangá",
+    "searchPlaceholder": "Pesquise seu anime favorito...",
+    "errorSearch": "Falha ao buscar resultados. Tente novamente.",
+    "noResults": "Ainda não mapeamos esse título. Tente o nome oficial em inglês ou japonês.",
+    "features": {
+      "mapping": "Mapeamento Manual",
+      "filler": "Identificação de Fillers"
+    }
+  },
+  "Navbar": {
+    "searchPlaceholder": "Pesquisar outro anime...",
+    "noResults": "Nenhum resultado"
+  },
+  "Types": {
+    "movie": "Filme",
+    "ova": "OVA",
+    "special": "Especial",
+    "ona": "ONA",
+    "music": "Música",
+    "anime": "Anime"
+  },
+  "Status": {
+    "finished": "Finalizado",
+    "ongoing": "Em Lançamento",
+    "upcoming": "Em Breve"
+  },
+  "TitlePage": {
+    "eps": "Episódios",
+    "ongoing": "Lançando",
+    "score": "Nota",
+    "sourceLabel": "Fonte",
+    "originalWork": "Obra Original",
+    "noSynopsis": "Nenhuma sinopse disponível.",
+    "fillerHeader": "Episódios Filler",
+    "readMore": "Ler Mais",
+    "showLess": "Mostrar Menos"
+  },
+  "Converter": {
+    "title": "Conversor Rápido",
+    "epLabel": "Episódio do Anime",
+    "capLabel": "Capítulo do Mangá",
+    "placeholder": "Ex: 12",
+    "swapTitle": "Inverter direção",
+    "convertBtn": "Converter agora",
+    "converting": "Convertendo...",
+    "errorNotFound": "Ainda não mapeamos este ponto. Tenta outro!",
+    "fillerLabel": "Filler detectado — pode pular",
+    "canonLabel": "Episódio Canon",
+    "sourceLabel": "Fonte"
+  },
+  "EpisodeList": {
+    "noFillers": "Este anime não possui episódios filler mapeados. Aproveite a maratona canon!",
+    "tableEp": "Episódio",
+    "tableCap": "Capítulo",
+    "tableSource": "Fonte"
+  },
+  "About": {
+    "title": "Sobre o Anime2Cap",
+    "question": "<bold>Anime2Cap</bold> existe para responder uma pergunta que todo fã já fez:",
+    "quote": "\"Terminei o episódio X. De qual capítulo eu continuo no mangá?\"",
+    "description": "Em vez de caçar respostas em fóruns e acabar recebendo spoilers, você encontra tudo aqui em segundos. Nosso objetivo é facilitar sua transição entre as mídias de forma precisa e direta.",
+    "howItWorksTitle": "Como funciona",
+    "searchTitle": "Busca inteligente",
+    "searchDesc": "Digite o nome do anime e receba os resultados instantaneamente, sem recarregar a página.",
+    "conversionTitle": "Conversão manual",
+    "conversionDesc": "Mapeamos episódios e capítulos com foco em precisão absoluta, identificando o que é <canon>Cânon</canon> e o que é <filler>Filler</filler>.",
+    "footerNote": "Nosso foco é a sua experiência. Sem jargões técnicos, sem distrações. Apenas a informação que você precisa para continuar sua jornada no mundo dos mangás."
+  },
+  "Privacy": {
+    "title": "Política de Privacidade",
+    "effectiveDate": "Efetivo em: 1 de Janeiro de 2026",
+    "intro": "No Anime2Cap, sua privacidade é nossa prioridade. Esta política explica como lidamos com as informações.",
+    "sec1Title": "1. Coleta de Dados",
+    "sec1Content": "Não coletamos informações de identificação pessoal (PII) dos usuários. Não há necessidade de criar conta para usar o site.",
+    "sec2Title": "2. Cookies e Rastreamento",
+    "sec2Content": "Podemos usar cookies técnicos básicos para lembrar suas preferências de idioma e melhorar o desempenho do site.",
+    "sec3Title": "3. Serviços de Terceiros",
+    "sec3Content": "Usamos APIs de terceiros (como Jikan) para fornecer dados de anime. Esses serviços podem ter suas próprias políticas de privacidade."
+  },
+  "Terms": {
+    "title": "Termos de Uso",
+    "effectiveDate": "Última atualização: 1 de Janeiro de 2026",
+    "sec1Title": "1. Aceitação dos Termos",
+    "sec1Content": "Ao acessar o Anime2Cap, você concorda em cumprir estes termos de uso.",
+    "sec2Title": "2. Uso do Serviço",
+    "sec2Content": "O serviço é fornecido 'como está'. O Anime2Cap não se responsabiliza por imprecisões nos dados fornecidos pelas APIs externas.",
+    "sec3Title": "3. Propriedade Intelectual",
+    "sec3Content": "Todo o conteúdo original do Anime2Cap (design, logos) é de nossa propriedade. Imagens e nomes de animes pertencem aos seus respectivos detentores de direitos."
+  },
+  "Footer": {
+    "copyright": "© 2026 Anime2Cap",
+    "license": "A ponte entre o anime e o mangá.",
+    "links": {
+      "converter": "Converter",
+      "about": "Sobre",
+      "privacy": "Privacidade",
+      "terms": "Termos"
+    }
+  }
+}
