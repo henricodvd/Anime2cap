@@ -79,7 +79,11 @@
     "sec2Title": "2. Cookies e Rastreamento",
     "sec2Content": "Podemos usar cookies técnicos básicos para lembrar suas preferências de idioma e melhorar o desempenho do site.",
     "sec3Title": "3. Serviços de Terceiros",
-    "sec3Content": "Usamos APIs de terceiros (como Jikan) para fornecer dados de anime. Esses serviços podem ter suas próprias políticas de privacidade."
+    "sec3Content": "Usamos APIs de terceiros (como Jikan) para fornecer dados de anime. Esses serviços podem ter suas próprias políticas de privacidade.",
+    "sec4Title": "4. Segurança",
+    "sec4Content": "Implementamos medidas de segurança comercialmente aceitáveis para proteger os dados do nosso site e a integridade da sua navegação.",
+    "sec5Title": "5. Alterações nesta Política",
+    "sec5Content": "Podemos atualizar nossa Política de Privacidade ocasionalmente. Recomendamos que você revise esta página periodicamente para quaisquer mudanças."
   },
   "Terms": {
     "title": "Termos de Uso",
