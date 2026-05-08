@@ -7,8 +7,8 @@ import { adminRateLimit } from '@/lib/ratelimit'
 // Zod Schema for each mapping item
 const mappingItemSchema = z.object({
   titleId: z.number().int().positive(),
-  episode: z.number().int().positive(),
-  chapter: z.number().int().positive(),
+  episode: z.number().positive(),
+  chapter: z.number().positive().nullable(),
   isFiller: z.boolean().optional().default(false),
   isCanon: z.boolean().optional().default(true),
   sourceType: z.enum(['manga', 'light_novel', 'original']).optional().default('manga'),
@@ -48,8 +48,12 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const items = parsed.data.mappings
-
+    const items = parsed.data.mappings.map(item => ({
+      ...item,
+      episode: item.episode.toString(),
+      chapter: item.chapter?.toString() || null
+    }))
+    
     // ─── Bulk insert ───────────────────────────────────────
     await db.insert(mappings).values(items)
 
