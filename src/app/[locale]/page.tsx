@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, Suspense } from 'react'
+import { useState, useEffect, Suspense, useCallback } from 'react'
 import { SearchBar } from '@/components/SearchBar'
 import { TitleCard } from '@/components/TitleCard'
 import { motion } from 'framer-motion'
@@ -25,7 +25,7 @@ function HomeContent() {
   const searchParams = useSearchParams()
   const q = searchParams.get('q')
 
-  const handleSearch = async (query: string) => {
+  const handleSearch = useCallback(async (query: string) => {
     if (!query) {
       setResults([])
       setHasSearched(false)
@@ -47,13 +47,13 @@ function HomeContent() {
     } finally {
       setIsLoading(false)
     }
-  }
+  }, [t])
 
   useEffect(() => {
     if (q) {
       handleSearch(q)
     }
-  }, [q])
+  }, [q, handleSearch])
 
   return (
     <main className="min-h-screen bg-night" role="main">

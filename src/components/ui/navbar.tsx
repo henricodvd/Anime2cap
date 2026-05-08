@@ -115,7 +115,6 @@ export function Navbar() {
                 placeholder={t('searchPlaceholder')}
                 aria-label={t('searchPlaceholder')}
                 aria-autocomplete="list"
-                aria-expanded={isOpen}
                 aria-controls="search-results"
                 className="w-full bg-white/5 border border-white/5 rounded-full py-2 sm:py-2.5 pl-9 sm:pl-11 pr-4 text-xs sm:text-sm text-paper placeholder-paper/10 focus:outline-none focus:border-brand-cherry/40 focus:bg-white/[0.08] transition-all font-body"
               />
