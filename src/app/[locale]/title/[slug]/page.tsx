@@ -35,7 +35,7 @@ export default async function TitlePage({ params }: { params: Promise<{ slug: st
   return (
     <div className="relative min-h-screen overflow-hidden">
       {/* Background Glow Effect */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[600px] bg-hero-glow rounded-full blur-[120px] opacity-20 pointer-events-none z-[-1]" />
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[280px] h-[280px] md:w-[1000px] md:h-[600px] bg-hero-glow rounded-full blur-[60px] md:blur-[120px] opacity-15 md:opacity-20 pointer-events-none z-[-1]" />
 
 
       <div className="max-w-6xl mx-auto px-6 pt-32 sm:pt-40 pb-24">

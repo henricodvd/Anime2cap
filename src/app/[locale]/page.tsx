@@ -59,7 +59,7 @@ function HomeContent() {
     <main className="min-h-screen bg-night" role="main">
       {/* Hero Section */}
       <section className="relative overflow-hidden pt-32 sm:pt-40 pb-12 sm:pb-20 px-6 flex flex-col items-center justify-center text-center">
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[620px] h-[620px] bg-hero-glow rounded-full blur-[90px] pointer-events-none" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[280px] h-[280px] md:w-[620px] md:h-[620px] bg-hero-glow rounded-full blur-[40px] md:blur-[90px] opacity-35 md:opacity-60 pointer-events-none" />
 
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
