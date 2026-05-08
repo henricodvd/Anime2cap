@@ -178,8 +178,8 @@ export async function saveMappings(
 
   const values = mappingsData.map(m => ({
     titleId,
-    episode: m.episode,
-    chapter: m.chapter,
+    episode: m.episode.toString(),
+    chapter: m.chapter.toString(),
     isFiller: m.isFiller,
     isCanon: !m.isFiller,
   }))
