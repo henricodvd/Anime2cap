@@ -8,7 +8,7 @@ import { convertRateLimit } from '@/lib/ratelimit'
 // Zod Schema
 const convertSchema = z.object({
   type: z.enum(['ep', 'cap']),
-  value: z.coerce.number().int().positive(),
+  value: z.coerce.number().positive(),
   title_id: z.coerce.number().int().positive(),
 })
 
@@ -44,7 +44,7 @@ export async function GET(request: NextRequest) {
     const result = await db
       .select()
       .from(mappings)
-      .where(and(eq(mappings.titleId, numericTitleId), eq(fieldToMatch, numericValue)))
+      .where(and(eq(mappings.titleId, numericTitleId), eq(fieldToMatch, numericValue.toString())))
       // Priority: manga > light_novel > original
       .orderBy(
         sql`CASE WHEN ${mappings.sourceType} = 'manga' THEN 1 WHEN ${mappings.sourceType} = 'light_novel' THEN 2 ELSE 3 END`
