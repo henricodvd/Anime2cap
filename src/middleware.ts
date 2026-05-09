@@ -6,7 +6,7 @@ export default createMiddleware(routing);
 export const config = {
   // Match all pathnames except for
   // - API routes
-  // - static files (e.g. sitemap.xml, robots.txt, favicon.ico)
+  // - static files (e.g. sitemap.xml, robots.txt, ads.txt, favicon.ico)
   // - _next (internal Next.js paths)
   matcher: [
     /*
@@ -17,7 +17,8 @@ export const config = {
      * - favicon.ico (favicon file)
      * - sitemap.xml
      * - robots.txt
+     * - ads.txt
      */
-    '/((?!api|_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt).*)',
+    '/((?!api|_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt|ads.txt).*)',
   ],
 };
