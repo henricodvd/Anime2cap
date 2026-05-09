@@ -37,7 +37,9 @@
     "noSynopsis": "あらすじがありません。",
     "fillerHeader": "フィラーエピソード",
     "readMore": "続きを読む",
-    "showLess": "閉じる"
+    "showLess": "閉じる",
+    "seoTitleSuffix": "マンガのどこから読む？ | Anime2Cap",
+    "defaultDescription": "アニメのエピソードに対応するマンガの章を確認。フィラー、カノン、完全読書ガイドを掲載しています。"
   },
   "Converter": {
     "title": "クイックコンバーター",

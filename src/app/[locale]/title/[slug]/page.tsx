@@ -4,26 +4,52 @@ import { notFound } from 'next/navigation'
 import { Star, Tv, BookOpen } from 'lucide-react'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 import { Synopsis } from '@/components/Synopsis'
+import { Metadata } from 'next'
 
 // Fetch title details on the server side
 async function getTitle(slug: string, locale: string) {
   // Use absolute URL since fetch is happening on the server
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
   const res = await fetch(`${baseUrl}/api/title/${slug}?locale=${locale}`, { next: { revalidate: 3600 } })
-  
+
   if (!res.ok) {
     if (res.status === 404) return null
     return null
   }
-  
+
   const data = await res.json()
   return data.title
+}
+
+// Dynamic Metadata generation for SEO
+export async function generateMetadata({ 
+  params 
+}: { 
+  params: Promise<{ slug: string, locale: string }> 
+}): Promise<Metadata> {
+  const { slug, locale } = await params;
+  const title = await getTitle(slug, locale);
+  
+  if (!title) return { title: 'Anime2Cap' };
+
+  const name = title.name;
+  const t = await getTranslations({ locale, namespace: 'TitlePage' });
+
+  return {
+    title: `${name} — ${t('seoTitleSuffix')}`,
+    description: title.synopsis?.slice(0, 160) || t('defaultDescription'),
+    openGraph: {
+      title: `${name} | Anime2Cap`,
+      description: title.synopsis?.slice(0, 160),
+      images: [title.image || ''],
+    },
+  };
 }
 
 export default async function TitlePage({ params }: { params: Promise<{ slug: string, locale: string }> }) {
   const { slug, locale } = await params;
   setRequestLocale(locale);
-  
+
   const title = await getTitle(slug, locale)
   const t = await getTranslations('TitlePage')
   const tTypes = await getTranslations('Types')
@@ -43,8 +69,8 @@ export default async function TitlePage({ params }: { params: Promise<{ slug: st
         <div className="flex flex-col md:flex-row gap-8 md:gap-12 mb-16 sm:mb-20 relative" role="article" aria-label={title.name}>
           <div className="w-48 sm:w-56 md:w-72 shrink-0 mx-auto md:mx-0">
             <div className="aspect-[3/4] rounded-2xl sm:rounded-3xl overflow-hidden bg-surface p-2 sm:p-3 border border-white/10 shadow-2xl relative">
-              <img 
-                src={title.image || '/placeholder.jpg'} 
+              <img
+                src={title.image || '/placeholder.jpg'}
                 alt={title.name}
                 className="w-full h-full object-cover rounded-xl sm:rounded-2xl shadow-inner"
                 aria-label={`Poster for ${title.name}`}
@@ -52,7 +78,7 @@ export default async function TitlePage({ params }: { params: Promise<{ slug: st
               <div className="absolute inset-0 rounded-xl sm:rounded-2xl ring-1 ring-inset ring-white/10" />
             </div>
           </div>
-          
+
           <div className="flex-1 flex flex-col justify-center text-center md:text-left">
             {title.nameJapanese && (
               <div className="mb-3 sm:mb-4 animate-fade-in">
@@ -64,7 +90,7 @@ export default async function TitlePage({ params }: { params: Promise<{ slug: st
             <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-paper mb-6 sm:mb-8 leading-[0.95] font-heading tracking-tighter uppercase italic">
               {title.name}
             </h1>
-            
+
             <div className="flex flex-wrap items-center justify-center md:justify-start gap-2 sm:gap-2.5 mb-8 sm:mb-10">
               <span className="px-3 sm:px-4 py-1 sm:py-1.5 bg-white/5 border border-white/10 rounded-full text-[9px] sm:text-[10px] font-bold uppercase tracking-widest text-paper/40 font-body">
                 {tTypes(title.type?.toLowerCase() || 'anime')}
@@ -75,12 +101,11 @@ export default async function TitlePage({ params }: { params: Promise<{ slug: st
               <span className="px-3 sm:px-4 py-1 sm:py-1.5 bg-filler/10 text-filler border border-filler/20 rounded-full text-[9px] sm:text-[10px] font-bold uppercase tracking-widest flex items-center gap-1.5 sm:gap-2 font-body" aria-label={`Score: ${title.score || 'N/A'}`}>
                 <Star className="w-3 sm:w-3.5 h-3 sm:h-3.5" /> {title.score || 'N/A'}
               </span>
-              <span 
-                className={`px-3 sm:px-4 py-1 sm:py-1.5 border rounded-full text-[9px] sm:text-[10px] font-bold uppercase tracking-widest flex items-center gap-1.5 sm:gap-2 font-body ${
-                  !title.source || title.source.toLowerCase().includes('original')
+              <span
+                className={`px-3 sm:px-4 py-1 sm:py-1.5 border rounded-full text-[9px] sm:text-[10px] font-bold uppercase tracking-widest flex items-center gap-1.5 sm:gap-2 font-body ${!title.source || title.source.toLowerCase().includes('original')
                     ? 'bg-brand-cherry/10 text-brand-cherry border-brand-cherry/20'
                     : 'bg-white/5 text-paper/40 border-white/10'
-                }`}
+                  }`}
                 aria-label={`Source: ${title.source || 'Original'}`}
               >
                 <BookOpen className="w-3 sm:w-3.5 h-3 sm:h-3.5" /> {t('sourceLabel')}: {title.source && title.source.toLowerCase().includes('original') ? t('originalWork') : title.source || t('originalWork')}
@@ -107,6 +132,26 @@ export default async function TitlePage({ params }: { params: Promise<{ slug: st
           <EpisodeList titleId={title.id} />
         </div>
       </div>
+
+      {/* JSON-LD Structured Data */}
+      <script
+        type="application/ld-json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Movie", // Schema.org doesn't have a specific Anime type, Movie/Series is used
+            "name": title.name,
+            "image": title.image,
+            "description": title.synopsis,
+            "aggregateRating": title.score ? {
+              "@type": "AggregateRating",
+              "ratingValue": title.score,
+              "bestRating": "10",
+              "worstRating": "1"
+            } : undefined
+          })
+        }}
+      />
     </div>
   )
 }

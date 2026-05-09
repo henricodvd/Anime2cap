@@ -8,6 +8,8 @@ import { NextIntlClientProvider } from 'next-intl';
 import { getMessages, getTranslations, setRequestLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import { routing } from '@/i18n/routing';
+import { GoogleAnalytics } from '@next/third-parties/google';
+import Script from 'next/script';
 
 const syne = Syne({
   subsets: ["latin"],
@@ -83,6 +85,19 @@ export default async function RootLayout({
             }}
           />
         </NextIntlClientProvider>
+        <GoogleAnalytics gaId="G-99VJ022RPE" />
+        <Script
+          id="microsoft-clarity"
+          strategy="afterInteractive"
+        >
+          {`
+            (function(c,l,a,r,i,t,y){
+                c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+                t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+                y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+            })(window, document, "clarity", "script", "wo7at9v1f0");
+          `}
+        </Script>
       </body>
     </html>
   );

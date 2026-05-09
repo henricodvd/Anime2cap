@@ -37,7 +37,9 @@
     "noSynopsis": "Nenhuma sinopse disponível.",
     "fillerHeader": "Episódios Filler",
     "readMore": "Ler Mais",
-    "showLess": "Mostrar Menos"
+    "showLess": "Mostrar Menos",
+    "seoTitleSuffix": "Aonde parar no mangá? | Anime2Cap",
+    "defaultDescription": "Descubra qual capítulo do mangá corresponde ao episódio do anime. Mapeamento de fillers, cânon e guia de leitura completo."
   },
   "Converter": {
     "title": "Conversor Rápido",

@@ -1,6 +1,7 @@
 import createNextIntlPlugin from 'next-intl/plugin';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
+import { withSentryConfig } from "@sentry/nextjs";
 
 const withNextIntl = createNextIntlPlugin('./src/i18n/request.ts');
 
@@ -42,11 +43,11 @@ const nextConfig = {
             key: 'Content-Security-Policy',
             value: [
               "default-src 'self'",
-              "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
+              "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://*.sentry.io https://*.clarity.ms",
               "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
               "font-src 'self' https://fonts.gstatic.com",
-              "img-src 'self' data: https://myanimelist.net https://*.myanimelist.net https://*.jikan.moe",
-              "connect-src 'self' https://api.jikan.moe",
+              "img-src 'self' data: https://myanimelist.net https://*.myanimelist.net https://*.jikan.moe https://*.clarity.ms",
+              "connect-src 'self' https://api.jikan.moe https://*.sentry.io https://*.google-analytics.com https://*.clarity.ms https://*.bing.com",
               "frame-ancestors 'none'",
             ].join('; '),
           },
@@ -100,4 +101,40 @@ const nextConfig = {
   },
 };
 
-export default withNextIntl(nextConfig);
+const sentryConfig = {
+  // For all available options, see:
+  // https://github.com/getsentry/sentry-webpack-plugin#options
+
+  // Suppresses source map uploading logs during bundling
+  silent: true,
+  org: "anime2cap",
+  project: "anime2cap",
+};
+
+const sentryOptions = {
+  // For all available options, see:
+  // https://docs.sentry.io/platforms/javascript/guides/nextjs/manual-setup/
+
+  // Upload a larger set of source maps for prettier stack traces (increases build time)
+  widenClientFileUpload: true,
+
+  // Transpiles SDK to be compatible with IE11 (increases bundle size)
+  transpileClientSDK: true,
+
+  // Routes browser requests to Sentry through a Next.js rewrite to circumvent ad-blockers (increases server load)
+  tunnelRoute: "/monitoring",
+
+  // Hides source maps from visitors
+  hideSourceMaps: true,
+
+  // Automatically tree-shake Sentry logger statements to reduce bundle size
+  disableLogger: true,
+
+  // Enables automatic instrumentation of Vercel Cron Monitors.
+  // See the following for more information:
+  // https://docs.sentry.io/product/crons/
+  // https://vercel.com/docs/cron-jobs
+  automaticVercelMonitors: true,
+};
+
+export default withSentryConfig(withNextIntl(nextConfig), sentryConfig, sentryOptions);

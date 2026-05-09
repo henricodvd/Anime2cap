@@ -37,7 +37,9 @@
     "noSynopsis": "No synopsis available.",
     "fillerHeader": "Filler Episodes",
     "readMore": "Read More",
-    "showLess": "Show Less"
+    "showLess": "Show Less",
+    "seoTitleSuffix": "Where to stop in the manga? | Anime2Cap",
+    "defaultDescription": "Find out which manga chapter corresponds to the anime episode. Filler mapping, canon guide, and complete reading guide."
   },
   "Converter": {
     "title": "Quick Converter",
