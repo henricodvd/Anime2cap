@@ -51,7 +51,15 @@ export default async function RootLayout({
   const t = await getTranslations('Footer');
 
   return (
-    <html lang={locale}>
+    <html lang={locale} className="scroll-smooth">
+      <head>
+        <Script
+          async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1278997205238367"
+          crossOrigin="anonymous"
+          strategy="afterInteractive"
+        />
+      </head>
       <body className={`${syne.variable} ${plusJakarta.variable} ${notoJP.variable} antialiased bg-night selection:bg-brand-cherry/35 selection:text-paper`}>
         <NextIntlClientProvider messages={messages}>
           <Navbar />
