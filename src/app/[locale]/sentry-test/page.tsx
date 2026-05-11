@@ -32,7 +32,7 @@ export default function SentryTestPage() {
       </button>
       <button
         onClick={() => {
-          // @ts-ignore
+          // @ts-expect-error
           myUndefinedFunction();
         }}
         style={{
