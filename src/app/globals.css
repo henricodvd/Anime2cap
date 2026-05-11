@@ -6,7 +6,8 @@
   --night: #0A0A0A;
   --surface: #161616;
   --paper: #F5F4F0;
-  --brand-cherry: #BE3252;
+  --brand-cherry: #D93E64;
+  --brand-cherry-soft: #D93E6466;
   --canon: #1D9E75;
   --filler: #E8A020;
   
@@ -17,11 +18,20 @@
   --glass-border: rgba(255, 255, 255, 0.05);
 }
 
+html, body {
+  overflow-x: hidden;
+  position: relative;
+  width: 100%;
+  max-width: 100vw;
+}
+
 body {
   font-family: var(--font-body), sans-serif;
   color: var(--foreground);
   background: var(--background);
   min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 h1, h2, h3, h4, h5, h6, .font-heading {

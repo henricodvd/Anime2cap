@@ -90,6 +90,8 @@ export async function GET(
       if (response.ok) {
         const data = await response.json()
         anime = data.data
+      } else if (response.status !== 404) {
+        throw new Error(`Jikan API error: ${response.status}`)
       }
     } else {
       // Search by name query using the slug - only as a last resort
@@ -104,6 +106,8 @@ export async function GET(
         
         // Priority 2: Fallback to first result if no exact slug match
         if (!anime) anime = jikanResults[0]
+      } else if (response.status !== 404) {
+        throw new Error(`Jikan API error: ${response.status}`)
       }
     }
     

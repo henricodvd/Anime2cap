@@ -15,7 +15,7 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
           <div className="bg-brand-cherry/10 p-3 rounded-2xl border border-brand-cherry/20">
             <BookOpen className="w-8 h-8 text-brand-cherry" />
           </div>
-          <h1 className="font-heading text-4xl font-bold tracking-tight text-paper uppercase italic">{t('title')}</h1>
+          <h1 className="font-heading text-xl sm:text-4xl font-bold tracking-tight text-paper uppercase italic leading-tight">{t('title')}</h1>
         </div>
 
         <div className="space-y-8 text-paper/75 leading-relaxed text-lg font-body">
@@ -42,14 +42,14 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
             <li className="flex gap-4">
               <div className="mt-1.5"><div className="w-2 h-2 rounded-full bg-brand-cherry" /></div>
               <div>
-                <strong className="text-paper block text-xl mb-1">{t('searchTitle')}</strong>
+                <strong className="text-paper block text-base sm:text-xl mb-1">{t('searchTitle')}</strong>
                 {t('searchDesc')}
               </div>
             </li>
             <li className="flex gap-4">
               <div className="mt-1.5"><div className="w-2 h-2 rounded-full bg-brand-cherry" /></div>
               <div>
-                <strong className="text-paper block text-xl mb-1">{t('conversionTitle')}</strong>
+                <strong className="text-paper block text-base sm:text-xl mb-1">{t('conversionTitle')}</strong>
                 {t.rich('conversionDesc', {
                   canon: (chunks) => <span className="text-canon font-bold">{chunks}</span>,
                   filler: (chunks) => <span className="text-filler font-bold text-[#E8A020]">{chunks}</span>

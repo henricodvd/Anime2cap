@@ -5,6 +5,7 @@ import { Star, Tv, BookOpen } from 'lucide-react'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 import { Synopsis } from '@/components/Synopsis'
 import { Metadata } from 'next'
+import { Breadcrumbs } from '@/components/Breadcrumbs'
 
 // Fetch title details on the server side
 async function getTitle(slug: string, locale: string) {
@@ -29,6 +30,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { slug, locale } = await params;
   const title = await getTitle(slug, locale);
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://www.anime2cap.com';
   
   if (!title) return { title: 'Anime2Cap' };
 
@@ -38,10 +40,31 @@ export async function generateMetadata({
   return {
     title: `${name} — ${t('seoTitleSuffix')}`,
     description: title.synopsis?.slice(0, 160) || t('defaultDescription'),
+    alternates: {
+      canonical: `${baseUrl}/${locale}/title/${slug}`,
+      languages: {
+        'pt-BR': `${baseUrl}/pt/title/${slug}`,
+        'en': `${baseUrl}/en/title/${slug}`,
+      },
+    },
     openGraph: {
       title: `${name} | Anime2Cap`,
       description: title.synopsis?.slice(0, 160),
-      images: [title.image || ''],
+      url: `${baseUrl}/${locale}/title/${slug}`,
+      images: [
+        {
+          url: title.image || '/og-image.png',
+          width: 1200,
+          height: 630,
+          alt: name,
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${name} | Anime2Cap`,
+      description: title.synopsis?.slice(0, 160),
+      images: [title.image || '/og-image.png'],
     },
   };
 }
@@ -58,6 +81,75 @@ export default async function TitlePage({ params }: { params: Promise<{ slug: st
     notFound()
   }
 
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://www.anime2cap.com';
+  const pageUrl = `${baseUrl}/${locale}/title/${slug}`;
+
+  const faqJsonLd = {
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": locale === 'pt' ? `Onde o anime de ${title.name} termina no mangá?` : `Where does ${title.name} anime end in the manga?`,
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": locale === 'pt' 
+            ? `O anime de ${title.name} termina em um ponto específico da história original. Para saber exatamente onde parar no anime e em qual capítulo do mangá começar a ler sem perder nenhum detalhe importante da obra de ${title.source}, utilize nosso conversor automático de episódios para capítulos acima.`
+            : `The ${title.name} anime concludes at a specific point in the original story. To find out exactly where the anime ends and which manga chapter to start reading without missing any crucial details from ${title.source}'s work, use our specialized episode-to-chapter converter above.`
+        }
+      },
+      {
+        "@type": "Question",
+        "name": locale === 'pt' ? `${title.name} tem episódios fillers?` : `Does ${title.name} have filler episodes?`,
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": locale === 'pt'
+            ? `Sim, ${title.name} possui episódios mapeados como fillers e cânon. Os episódios fillers são histórias originais do anime que não existem no mangá, enquanto os episódios cânon seguem a história fielmente. Você pode conferir a lista completa de fillers e capítulos correspondentes na tabela de episódios desta página.`
+            : `Yes, ${title.name} has episodes identified as both fillers and canon. Filler episodes are original anime stories not found in the manga, whereas canon episodes follow the source material faithfully. You can check the complete list of fillers and their corresponding manga chapters in the episode table on this page.`
+        }
+      }
+    ]
+  };
+
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "TVSeries",
+        "name": title.name,
+        "alternativeName": title.nameJapanese,
+        "image": title.image,
+        "description": title.synopsis,
+        "url": pageUrl,
+        "genre": title.type,
+        "numberOfEpisodes": title.episodes,
+        "aggregateRating": title.score ? {
+          "@type": "AggregateRating",
+          "ratingValue": title.score,
+          "bestRating": "10",
+          "worstRating": "1"
+        } : undefined
+      },
+      faqJsonLd,
+      {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          {
+            "@type": "ListItem",
+            "position": 1,
+            "name": locale === 'pt' ? 'Início' : 'Home',
+            "item": `${baseUrl}/${locale}`
+          },
+          {
+            "@type": "ListItem",
+            "position": 2,
+            "name": title.name,
+            "item": pageUrl
+          }
+        ]
+      }
+    ]
+  };
+
   return (
     <div className="relative min-h-screen overflow-hidden">
       {/* Background Glow Effect */}
@@ -65,6 +157,11 @@ export default async function TitlePage({ params }: { params: Promise<{ slug: st
 
 
       <div className="max-w-6xl mx-auto px-6 pt-32 sm:pt-40 pb-24">
+        <Breadcrumbs 
+          items={[
+            { label: title.name, active: true }
+          ]} 
+        />
         {/* Header Section */}
         <div className="flex flex-col md:flex-row gap-8 md:gap-12 mb-16 sm:mb-20 relative" role="article" aria-label={title.name}>
           <div className="w-48 sm:w-56 md:w-72 shrink-0 mx-auto md:mx-0">
@@ -117,39 +214,61 @@ export default async function TitlePage({ params }: { params: Promise<{ slug: st
         </div>
 
         {/* Converter Section */}
-        <div className="mb-24">
+        <section className="mb-24" aria-labelledby="converter-heading">
+          <h2 id="converter-heading" className="sr-only">{t('converterTitle') || 'Converter'}</h2>
           <Converter titleId={title.id} />
-        </div>
+        </section>
 
         {/* Mappings Table Section */}
-        <div className="space-y-8">
+        <section className="space-y-8" aria-labelledby="filler-heading">
           <div className="flex items-center gap-6">
-            <h3 className="text-xl sm:text-3xl font-black text-paper font-heading tracking-tight uppercase italic shrink-0">
+            <h2 id="filler-heading" className="text-xl sm:text-3xl font-black text-paper font-heading tracking-tight uppercase italic shrink-0">
               {t('fillerHeader')}
-            </h3>
+            </h2>
             <div className="h-px w-full bg-gradient-to-r from-white/10 to-transparent" />
           </div>
           <EpisodeList titleId={title.id} />
-        </div>
+        </section>
+
+        {/* FAQ Section for Featured Snippets */}
+        <section className="mt-24 pt-24 border-t border-white/5" aria-labelledby="faq-heading">
+          <h2 id="faq-heading" className="text-2xl sm:text-4xl font-black text-paper font-heading tracking-tight uppercase italic mb-12">
+            {locale === 'pt' ? 'Perguntas Frequentes' : 'Frequently Asked Questions'}
+          </h2>
+          
+          <div className="grid gap-8">
+            <div className="glass-panel p-8 rounded-3xl border border-white/5">
+              <h3 className="text-lg sm:text-xl font-bold text-paper mb-4 font-heading uppercase italic">
+                {locale === 'pt' ? `Onde o anime de ${title.name} termina no mangá?` : `Where does ${title.name} anime end in the manga?`}
+              </h3>
+              <p className="text-paper/70 leading-relaxed font-body">
+                {locale === 'pt' 
+                  ? `O anime de ${title.name} encerra sua adaptação em um ponto crucial da obra original. Para descobrir exatamente onde ler o mangá após o anime e qual capítulo corresponde ao último episódio assistido, basta selecionar o número do episódio no nosso conversor automático localizado no topo desta página para obter o capítulo preciso.`
+                  : `The ${title.name} anime concludes its adaptation at a crucial point in the original story. To find out exactly where to read the manga after the anime and which chapter corresponds to the last episode you watched, simply select the episode number in our automatic converter at the top of this page.`
+                }
+              </p>
+            </div>
+
+            <div className="glass-panel p-8 rounded-3xl border border-white/5">
+              <h3 className="text-lg sm:text-xl font-bold text-paper mb-4 font-heading uppercase italic">
+                {locale === 'pt' ? `Quais episódios de ${title.name} são filler?` : `Which episodes of ${title.name} are filler?`}
+              </h3>
+              <p className="text-paper/70 leading-relaxed font-body">
+                {locale === 'pt'
+                  ? `${title.name} possui uma mistura de episódios cânon (baseados no mangá) e episódios filler (originais do anime). Nossa tabela de episódios acima detalha o status de cada um, permitindo que você identifique rapidamente quais partes da história são essenciais para acompanhar a trama principal do mangá de ${title.source}.`
+                  : `${title.name} features a mix of canon episodes (manga-based) and filler episodes (anime originals). Our episode table above details the status of each, allowing you to quickly identify which parts of the story are essential for following the main manga plot from ${title.source}.`
+                }
+              </p>
+            </div>
+          </div>
+        </section>
       </div>
 
       {/* JSON-LD Structured Data */}
       <script
         type="application/ld-json"
         dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "Movie", // Schema.org doesn't have a specific Anime type, Movie/Series is used
-            "name": title.name,
-            "image": title.image,
-            "description": title.synopsis,
-            "aggregateRating": title.score ? {
-              "@type": "AggregateRating",
-              "ratingValue": title.score,
-              "bestRating": "10",
-              "worstRating": "1"
-            } : undefined
-          })
+          __html: JSON.stringify(jsonLd)
         }}
       />
     </div>

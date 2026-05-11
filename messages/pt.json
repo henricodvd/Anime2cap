@@ -1,7 +1,7 @@
 {
   "Home": {
-    "title": "Terminou o <br></br><span>episódio?</span>",
-    "description": "Descubra em segundos qual capítulo corresponde ao seu episódio atual. <canon>Canon</canon> em verde, <filler>Filler</filler> em âmbar.",
+    "title": "Anime2Cap - <br></br><span>Episódio para Capítulo</span>",
+    "description": "Descubra qual capítulo do mangá corresponde ao seu episódio atual do anime. Guia completo de episódios canon e fillers para ler sem spoilers. ✓ Confira agora!",
     "tagline": "A ponte entre o anime e o mangá",
     "searchPlaceholder": "Pesquise seu anime favorito...",
     "errorSearch": "Falha ao buscar resultados. Tente novamente.",
@@ -38,8 +38,8 @@
     "fillerHeader": "Episódios Filler",
     "readMore": "Ler Mais",
     "showLess": "Mostrar Menos",
-    "seoTitleSuffix": "Aonde parar no mangá? | Anime2Cap",
-    "defaultDescription": "Descubra qual capítulo do mangá corresponde ao episódio do anime. Mapeamento de fillers, cânon e guia de leitura completo."
+    "seoTitleSuffix": "Episódio para Capítulo do Mangá - Onde Ler? | Anime2Cap",
+    "defaultDescription": "Descubra exatamente qual capítulo do mangá corresponde ao episódio do anime. Onde começar a ler após o anime? Guia completo de mapeamento e fillers. ✓ Clique aqui!"
   },
   "Converter": {
     "title": "Conversor Rápido",

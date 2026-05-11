@@ -129,7 +129,7 @@ export function Navbar() {
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: 10 }}
-                  className="absolute top-full mt-3 left-0 right-0 bg-[#0A0A0A] border border-white/15 rounded-xl sm:rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.8)] overflow-hidden z-[100] max-h-[350px] sm:max-h-[400px] overflow-y-auto custom-scrollbar"
+                  className="absolute top-full mt-3 left-1/2 -translate-x-1/2 w-[95vw] sm:w-full bg-[#0A0A0A] border border-white/15 rounded-xl sm:rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.8)] overflow-hidden z-[100] max-h-[70vh] sm:max-h-[400px] overflow-y-auto custom-scrollbar"
                 >
                   {results.length > 0 ? (
                     <div className="py-2">
@@ -139,9 +139,9 @@ export function Navbar() {
                           href={`/title/${anime.slug}`}
                           role="option"
                           aria-selected="false"
-                          className="flex items-center gap-3 sm:gap-4 px-3 sm:px-4 py-2 sm:py-3 hover:bg-white/5 transition-colors group"
+                          className="flex items-center gap-2 sm:gap-4 px-2 sm:px-4 py-1.5 sm:py-3 hover:bg-white/5 transition-colors group"
                         >
-                          <div className="w-10 h-14 sm:w-12 sm:h-16 shrink-0 rounded-lg overflow-hidden border border-white/10">
+                          <div className="w-8 h-12 sm:w-12 sm:h-16 shrink-0 rounded-lg overflow-hidden border border-white/10">
                             <img src={anime.image} alt={anime.name} className="w-full h-full object-cover" />
                           </div>
                           <div className="flex-1 min-w-0">

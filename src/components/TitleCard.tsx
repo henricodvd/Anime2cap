@@ -53,19 +53,19 @@ export function TitleCard({ id, name, slug, image, status, type, index }: TitleC
           <div className="absolute inset-0 bg-gradient-to-t from-night via-night/10 to-transparent opacity-90" />
           
           {/* Top-right badge for type */}
-          <div className="absolute top-3 right-3">
-            <span className="text-[10px] font-bold px-2.5 py-1 rounded-full bg-black/60 backdrop-blur-md text-paper/80 uppercase tracking-widest border border-white/10 font-body">
+          <div className="absolute top-2 right-2 sm:top-3 sm:right-3">
+            <span className="text-[8px] sm:text-[10px] font-bold px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full bg-black/60 backdrop-blur-md text-paper/80 uppercase tracking-widest border border-white/10 font-body">
               {tTypes(type?.toLowerCase() || 'anime')}
             </span>
           </div>
         </div>
 
-        <div className="p-5 flex-1 flex flex-col bg-surface">
-          <h3 className="font-heading font-black text-base leading-tight text-paper/90 group-hover:text-brand-cherry transition-colors line-clamp-2 mb-4 tracking-tight uppercase italic">
+        <div className="p-3 sm:p-5 flex-1 flex flex-col bg-surface">
+          <h3 className="font-heading font-black text-xs sm:text-base leading-tight text-paper/90 group-hover:text-brand-cherry transition-colors line-clamp-3 mb-1.5 sm:mb-4 tracking-tight uppercase italic min-h-[2.5rem] sm:min-h-0">
             {name}
           </h3>
           <div className="mt-auto">
-            <span className={`text-[10px] font-bold px-3 py-1 rounded-full border uppercase tracking-wider font-body ${
+            <span className={`text-[8px] sm:text-[10px] font-bold px-2 sm:px-3 py-0.5 sm:py-1 rounded-full border uppercase tracking-wider font-body ${
               statusKey === 'finished' ? 'border-canon/30 text-canon bg-canon/5' :
               statusKey === 'ongoing' ? 'border-brand-cherry/30 text-brand-cherry bg-brand-cherry/5' :
               'border-white/10 text-white/40 bg-white/5'

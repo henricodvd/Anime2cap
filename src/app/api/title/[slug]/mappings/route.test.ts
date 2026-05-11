@@ -30,7 +30,7 @@ describe('GET /api/title/[id]/mappings', () => {
 
   it('should return mappings for a title', async () => {
     const request = new NextRequest('http://localhost:3000/api/title/20/mappings')
-    const response = await GET(request, { params: { id: '20' } })
+    const response = await GET(request, { params: Promise.resolve({ slug: '20' }) })
     const data = await response.json()
 
     expect(response.status).toBe(200)
@@ -43,7 +43,7 @@ describe('GET /api/title/[id]/mappings', () => {
     mockOrderBy.mockResolvedValueOnce([])
 
     const request = new NextRequest('http://localhost:3000/api/title/999/mappings')
-    const response = await GET(request, { params: { id: '999' } })
+    const response = await GET(request, { params: Promise.resolve({ slug: '999' }) })
     const data = await response.json()
 
     expect(response.status).toBe(200)

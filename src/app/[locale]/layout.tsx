@@ -1,4 +1,5 @@
 import { Syne, Plus_Jakarta_Sans, Noto_Sans_JP } from "next/font/google";
+import type { Metadata, Viewport } from "next";
 import "../globals.css";
 
 import { BookOpen } from "lucide-react";
@@ -32,6 +33,37 @@ const notoJP = Noto_Sans_JP({
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
 }
+
+export const viewport: Viewport = {
+  themeColor: "#0D0D0D",
+  width: "device-width",
+  initialScale: 1,
+};
+
+export const metadata: Metadata = {
+  title: {
+    template: "%s | Anime2Cap",
+    default: "Anime2Cap - Episode to Manga Chapter Converter",
+  },
+  description: "Find out where to start reading the manga after any anime episode. Accurate mapping, filler lists, and more.",
+  keywords: ["anime to manga", "episode to chapter", "manga converter", "anime filler list"],
+  authors: [{ name: "Anime2Cap Team" }],
+  openGraph: {
+    type: "website",
+    siteName: "Anime2Cap",
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "Anime2Cap",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+  },
+};
 
 export default async function RootLayout({
   children,
@@ -94,21 +126,22 @@ export default async function RootLayout({
           />
         </NextIntlClientProvider>
         <GoogleAnalytics gaId="G-99VJ022RPE" />
-        <Script
-          id="microsoft-clarity"
-          strategy="afterInteractive"
-        >
+        <Script 
+          id="google-ads"
+          src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${process.env.NEXT_PUBLIC_ADSENSE_ID}`}
+          strategy="lazyOnload"
+          crossOrigin="anonymous"
+        />
+        <Script id="clarity-script" strategy="lazyOnload">
           {`
             (function(c,l,a,r,i,t,y){
-                c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
-                t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
-                y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
-            })(window, document, "clarity", "script", "wo7at9v1f0");
+              c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+              t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+              y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+            })(window, document, "clarity", "script", "${process.env.NEXT_PUBLIC_CLARITY_ID}");
           `}
         </Script>
       </body>
     </html>
   );
 }
-
-

@@ -35,7 +35,7 @@ describe('GET /api/title/[id]/fillers', () => {
 
   it('should return only filler episodes', async () => {
     const request = new NextRequest('http://localhost:3000/api/title/20/fillers')
-    const response = await GET(request, { params: { id: '20' } })
+    const response = await GET(request, { params: Promise.resolve({ slug: '20' }) })
     const data = await response.json()
 
     expect(response.status).toBe(200)
@@ -48,7 +48,7 @@ describe('GET /api/title/[id]/fillers', () => {
     mockOrderBy.mockResolvedValueOnce([])
 
     const request = new NextRequest('http://localhost:3000/api/title/20/fillers')
-    const response = await GET(request, { params: { id: '20' } })
+    const response = await GET(request, { params: Promise.resolve({ slug: '20' }) })
     const data = await response.json()
 
     expect(response.status).toBe(200)
