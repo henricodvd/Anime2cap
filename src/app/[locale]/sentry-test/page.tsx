@@ -32,7 +32,7 @@ export default function SentryTestPage() {
       </button>
       <button
         onClick={() => {
-          // @ts-expect-error
+          // @ts-expect-error: intentional error for Sentry testing
           myUndefinedFunction();
         }}
         style={{
