@@ -88,6 +88,13 @@ describe('POST /api/admin/mappings', () => {
 
     expect(response.status).toBe(200)
     expect(data.inserted).toBe(2)
-    expect(mockValues).toHaveBeenCalledWith(payload.mappings)
+    
+    // Expect strings because they are converted for the database numeric type
+    const expected = payload.mappings.map(m => ({
+      ...m,
+      episode: m.episode.toString(),
+      chapter: m.chapter?.toString() || null
+    }))
+    expect(mockValues).toHaveBeenCalledWith(expected)
   })
 })

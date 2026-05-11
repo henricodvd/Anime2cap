@@ -48,8 +48,11 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const items = parsed.data.mappings
-
+    const items = parsed.data.mappings.map(item => ({
+      ...item,
+      episode: item.episode.toString(),
+      chapter: item.chapter?.toString() || null
+    }))
     
     // ─── Bulk insert ───────────────────────────────────────
     await db.insert(mappings).values(items)
