@@ -27,7 +27,7 @@ const config: Config = {
       fontFamily: {
         heading: ["var(--font-heading)", "sans-serif"],
         body: ["var(--font-body)", "sans-serif"],
-        jp: ["var(--font-jp)", "sans-serif"],
+        ja: ["var(--font-ja)", "sans-serif"],
       },
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',

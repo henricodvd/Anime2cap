@@ -47,7 +47,7 @@ const nextConfig = {
               "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
               "font-src 'self' https://fonts.gstatic.com",
               "img-src 'self' data: https://myanimelist.net https://*.myanimelist.net https://*.jikan.moe https://*.clarity.ms https://pagead2.googlesyndication.com https://adservice.google.com",
-              "connect-src 'self' https://api.jikan.moe https://*.sentry.io https://*.google-analytics.com https://*.clarity.ms https://*.bing.com https://pagead2.googlesyndication.com",
+              "connect-src 'self' https://api.jikan.moe https://*.sentry.io https://*.google-analytics.com https://*.clarity.ms https://*.bing.com https://pagead2.googlesyndication.com https://ep1.adtrafficquality.google",
               "frame-src 'self' https://googleads.g.doubleclick.net https://*.google.com https://*.googlesyndication.com",
               "frame-ancestors 'none'",
             ].join('; '),

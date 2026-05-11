@@ -14,7 +14,7 @@ export async function translateText(text: string, targetLocale: string): Promise
 
   const targetLangName = 
     targetLocale === 'pt' ? 'Portuguese (Brazil)' : 
-    targetLocale === 'jp' ? 'Japanese' : 
+    targetLocale === 'ja' ? 'Japanese' : 
     'English'
 
   try {

@@ -22,7 +22,7 @@ jest.mock('next-intl/server', () => ({
 }));
 
 jest.mock('../i18n/routing', () => ({
-  routing: { locales: ['en', 'pt', 'jp'], defaultLocale: 'pt' },
+  routing: { locales: ['en', 'pt', 'ja'], defaultLocale: 'pt' },
   Link: ({ children }: any) => <a>{children}</a>,
   usePathname: () => '/',
   useRouter: () => ({ push: jest.fn() }),

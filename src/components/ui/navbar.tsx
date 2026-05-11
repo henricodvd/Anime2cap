@@ -30,7 +30,7 @@ export function Navbar() {
 
   const isHome = pathname === "/";
 
-  const handleLanguageChange = (newLocale: 'en' | 'pt' | 'jp') => {
+  const handleLanguageChange = (newLocale: 'en' | 'pt' | 'ja') => {
     router.replace(pathname, { locale: newLocale });
     setIsLangOpen(false);
   };
@@ -193,7 +193,7 @@ export function Navbar() {
                   exit={{ opacity: 0, y: 10, scale: 0.95 }}
                   className="absolute top-full mt-2 right-0 bg-[#0A0A0A]/90 backdrop-blur-2xl border border-white/10 rounded-xl sm:rounded-2xl shadow-2xl overflow-hidden z-[110] min-w-[110px] sm:min-w-[120px]"
                 >
-                  {(['pt', 'en', 'jp'] as const).map((l) => (
+                  {(['pt', 'en', 'ja'] as const).map((l) => (
                     <button
                       key={l}
                       role="option"

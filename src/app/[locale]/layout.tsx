@@ -24,9 +24,9 @@ const plusJakarta = Plus_Jakarta_Sans({
   weight: ["400", "500", "600", "700"],
 });
 
-const notoJP = Noto_Sans_JP({
+const notoJA = Noto_Sans_JP({
   subsets: ["latin"],
-  variable: "--font-jp",
+  variable: "--font-ja",
   weight: ["400", "700"],
 });
 
@@ -84,15 +84,7 @@ export default async function RootLayout({
 
   return (
     <html lang={locale} className="scroll-smooth">
-      <head>
-        <Script
-          async
-          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1278997205238367"
-          crossOrigin="anonymous"
-          strategy="afterInteractive"
-        />
-      </head>
-      <body className={`${syne.variable} ${plusJakarta.variable} ${notoJP.variable} antialiased bg-night selection:bg-brand-cherry/35 selection:text-paper`}>
+      <body className={`${syne.variable} ${plusJakarta.variable} ${notoJA.variable} antialiased bg-night selection:bg-brand-cherry/35 selection:text-paper`}>
         <NextIntlClientProvider messages={messages}>
           <Navbar />
           <main className="pt-24">
@@ -125,7 +117,18 @@ export default async function RootLayout({
             }}
           />
         </NextIntlClientProvider>
-        <GoogleAnalytics gaId="G-99VJ022RPE" />
+        <Script 
+          src="https://www.googletagmanager.com/gtag/js?id=G-99VJ022RPE"
+          strategy="lazyOnload"
+        />
+        <Script id="google-analytics" strategy="lazyOnload">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-99VJ022RPE');
+          `}
+        </Script>
         <Script 
           id="google-ads"
           src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${process.env.NEXT_PUBLIC_ADSENSE_ID}`}
