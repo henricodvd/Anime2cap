@@ -6,6 +6,10 @@ Sentry.init({
   debug: false,
   replaysOnErrorSampleRate: 1.0,
   replaysSessionSampleRate: 0.1,
+  ignoreErrors: [
+    "Non-Error promise rejection captured with value: undefined",
+    "AdSense head tag doesn't support data-nscript attribute.",
+  ],
 });
 
 export const onRouterTransitionStart = Sentry.captureRouterTransitionStart;

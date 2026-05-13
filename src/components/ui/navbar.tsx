@@ -1,6 +1,6 @@
 'use client'
 
-import { BookOpen, Search as SearchIcon, Loader2, ChevronDown } from "lucide-react";
+import { Search as SearchIcon, Loader2, ChevronDown } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 import { Link, useRouter, usePathname } from "@/i18n/routing";
 import { motion, AnimatePresence } from "framer-motion";
@@ -90,8 +90,8 @@ export function Navbar() {
           className="flex items-center gap-2.5 group shrink-0"
           aria-label="Anime2Cap Home"
         >
-          <div className="bg-brand-cherry/10 p-1.5 sm:p-2 rounded-lg sm:rounded-xl border border-brand-cherry/20 group-hover:bg-brand-cherry/20 transition-all duration-500 group-hover:scale-110">
-            <BookOpen className="w-4 h-4 sm:w-5 sm:h-5 text-brand-cherry" />
+          <div className="bg-brand-cherry/10 p-1.5 sm:p-2 rounded-lg sm:rounded-xl border border-brand-cherry/20 group-hover:bg-brand-cherry/20 transition-all duration-500 group-hover:scale-110 flex items-center justify-center">
+            <img src="/android-chrome-192x192.png" alt="Anime2Cap Logo" className="w-4 h-4 sm:w-5 sm:h-5 object-contain" />
           </div>
           <span className="font-heading text-lg sm:text-2xl font-extrabold tracking-tight text-paper italic">
             Anime<span className="text-brand-cherry drop-shadow-[0_0_8px_rgba(190,50,82,0.5)]">2</span>Cap

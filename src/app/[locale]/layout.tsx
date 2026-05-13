@@ -2,7 +2,7 @@ import { Syne, Plus_Jakarta_Sans, Noto_Sans_JP } from "next/font/google";
 import type { Metadata, Viewport } from "next";
 import "../globals.css";
 
-import { BookOpen } from "lucide-react";
+
 import { Footer } from "@/components/ui/footer";
 import { Navbar } from "@/components/ui/navbar";
 import { NextIntlClientProvider } from 'next-intl';
@@ -48,6 +48,16 @@ export const metadata: Metadata = {
   description: "Find out where to start reading the manga after any anime episode. Accurate mapping, filler lists, and more.",
   keywords: ["anime to manga", "episode to chapter", "manga converter", "anime filler list"],
   authors: [{ name: "Anime2Cap Team" }],
+  icons: {
+    icon: [
+      { url: '/favicon-32x32.png', sizes: '32x32', type: 'image/png' },
+      { url: '/favicon-16x16.png', sizes: '16x16', type: 'image/png' }
+    ],
+    apple: [
+      { url: '/apple-touch-icon.png', sizes: '180x180', type: 'image/png' },
+    ],
+  },
+  manifest: '/site.webmanifest',
   openGraph: {
     type: "website",
     siteName: "Anime2Cap",
@@ -93,8 +103,8 @@ export default async function RootLayout({
           
           <Footer
             logo={
-              <div className="bg-brand-cherry/10 p-2 rounded-xl border border-brand-cherry/20">
-                <BookOpen className="w-5 h-5 text-brand-cherry" />
+              <div className="bg-brand-cherry/10 p-2 rounded-xl border border-brand-cherry/20 flex items-center justify-center">
+                <img src="/android-chrome-192x192.png" alt="Anime2Cap Logo" className="w-5 h-5 object-contain" />
               </div>
             }
             brandName={
