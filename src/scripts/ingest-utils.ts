@@ -176,13 +176,19 @@ export async function saveMappings(
 ): Promise<void> {
   if (mappingsData.length === 0) return
 
-  const values = mappingsData.map(m => ({
-    titleId,
-    episode: m.episode.toString(),
-    chapter: m.chapter.toString(),
-    isFiller: m.isFiller,
-    isCanon: !m.isFiller,
-  }))
+  const values = mappingsData.map(m => {
+    if (m.episode === null || m.episode === undefined) {
+      console.warn(`⚠️ Warning: Mapping has null episode, skipping...`);
+      return null;
+    }
+    return {
+      titleId,
+      episode: m.episode.toString(),
+      chapter: m.chapter != null ? m.chapter.toString() : null,
+      isFiller: m.isFiller ?? false,
+      isCanon: !(m.isFiller ?? false),
+    };
+  }).filter((v): v is NonNullable<typeof v> => v !== null)
 
   await db.insert(mappings).values(values).onConflictDoUpdate({
     target: [mappings.titleId, mappings.episode, mappings.chapter],
