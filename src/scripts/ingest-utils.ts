@@ -118,13 +118,43 @@ export async function extractMappingsWithAI(
     const data = await response.json()
     const content = data.choices[0].message.content
     
-    // Improved JSON extraction: find the first '[' and last ']'
-    const jsonMatch = content.match(/\[[\s\S]*\]/)
-    if (!jsonMatch) {
-      throw new Error('No JSON array found in AI response: ' + content)
+    // Robust JSON extraction: find a JSON array of objects, skipping
+    // bracket characters that appear in anime titles like "[Oshi no Ko]"
+    let parsed: IngestMapping[] | null = null
+
+    // Strategy 1: Find all '[' positions and try to parse a JSON array from each
+    // This handles both `[{` (compact) and `[\n  {` (pretty-printed)
+    for (let i = 0; i < content.length && !parsed; i++) {
+      if (content[i] !== '[') continue
+      // Check if a '{' follows (with optional whitespace/newlines)
+      const afterBracket = content.substring(i + 1).trimStart()
+      if (!afterBracket.startsWith('{')) continue
+      // Try parsing from this '[' to progressively earlier ']'
+      for (let end = content.lastIndexOf(']'); end > i; end = content.lastIndexOf(']', end - 1)) {
+        try {
+          parsed = JSON.parse(content.substring(i, end + 1))
+          break
+        } catch {
+          // try next ']'
+        }
+      }
     }
 
-    return JSON.parse(jsonMatch[0])
+    // Strategy 2: Fallback — try the whole content as JSON
+    if (!parsed) {
+      try {
+        const full = JSON.parse(content)
+        parsed = Array.isArray(full) ? full : full.mappings ?? full.data ?? null
+      } catch {
+        // not valid JSON
+      }
+    }
+
+    if (!parsed || !Array.isArray(parsed)) {
+      throw new Error('No JSON array found in AI response: ' + content.substring(0, 200))
+    }
+
+    return parsed
   } catch (error) {
     console.error('Error extracting mappings with AI:', error)
     return []
@@ -177,18 +207,32 @@ export async function saveMappings(
   if (mappingsData.length === 0) return
 
   const values = mappingsData.map(m => {
-    if (m.episode === null || m.episode === undefined) {
-      console.warn(`⚠️ Warning: Mapping has null episode, skipping...`);
+    if (m.episode === null || m.episode === undefined || isNaN(Number(m.episode))) {
+      console.warn(`⚠️ Warning: Mapping has invalid episode (${m.episode}), skipping...`);
       return null;
     }
+
+    let chapterVal: string | null = null;
+    if (m.chapter != null) {
+      // Try to parse chapter. The AI or scraper might return strings like "Heart of a Fire Soldier"
+      const parsedCh = Number(m.chapter);
+      if (!isNaN(parsedCh)) {
+        chapterVal = parsedCh.toString();
+      } else {
+        console.warn(`⚠️ Warning: Episode ${m.episode} has invalid numeric chapter "${m.chapter}", setting to null.`);
+      }
+    }
+
     return {
       titleId,
-      episode: m.episode.toString(),
-      chapter: m.chapter != null ? m.chapter.toString() : null,
+      episode: Number(m.episode).toString(),
+      chapter: chapterVal,
       isFiller: m.isFiller ?? false,
       isCanon: !(m.isFiller ?? false),
     };
   }).filter((v): v is NonNullable<typeof v> => v !== null)
+
+  if (values.length === 0) return
 
   await db.insert(mappings).values(values).onConflictDoUpdate({
     target: [mappings.titleId, mappings.episode, mappings.chapter],
