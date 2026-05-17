@@ -17,6 +17,43 @@ interface ConversionResult {
   sourceType: string
 }
 
+/**
+ * Returns a user-friendly message when chapter data is unavailable,
+ * contextual to the anime's source material type.
+ */
+function getNoChapterMessage(sourceType: string, t: (key: string) => string): string {
+  switch (sourceType) {
+    case 'game':
+    case 'original':
+      return t('noChapterOriginal')
+    case 'light_novel':
+    case 'novel':
+    case 'web_novel':
+      return t('noChapterNovel')
+    default:
+      return t('noChapterUnavailable')
+  }
+}
+
+/**
+ * Formats sourceType enum values for display.
+ */
+function formatSourceType(sourceType: string, tTitle: (key: string) => string): string {
+  const map: Record<string, string> = {
+    manga: 'Manga',
+    light_novel: 'Light Novel',
+    original: tTitle('originalWork'),
+    game: 'Game',
+    visual_novel: 'Visual Novel',
+    novel: 'Novel',
+    web_manga: 'Web Manga',
+    web_novel: 'Web Novel',
+    other: 'Other',
+    unknown: 'Unknown',
+  }
+  return map[sourceType] || sourceType.replace('_', ' ')
+}
+
 export function Converter({ titleId }: ConverterProps) {
   const t = useTranslations('Converter')
   const tTitle = useTranslations('TitlePage')
@@ -40,12 +77,24 @@ export function Converter({ titleId }: ConverterProps) {
       const data = await res.json()
 
       if (!res.ok) {
+        if (data.error === 'ExceededMax' && data.maxAvailable) {
+          throw new Error(`exceeded_${data.maxAvailable}`)
+        }
         throw new Error(data.error || 'Conversion failed')
       }
 
       setResult(data.converted)
     } catch (err: any) {
-      setError(t('errorNotFound'))
+      if (err.message && err.message.startsWith('exceeded_')) {
+        const max = err.message.split('_')[1]
+        if (direction === 'ep_to_cap') {
+          setError(t('errorExceededMaxEp', { max }))
+        } else {
+          setError(t('errorExceededMaxCap', { max }))
+        }
+      } else {
+        setError(t('errorNotFound'))
+      }
     } finally {
       setIsLoading(false)
     }
@@ -108,9 +157,9 @@ export function Converter({ titleId }: ConverterProps) {
               <motion.span 
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
-                className="text-paper text-3xl sm:text-4xl"
+                className={`${result.value ? 'text-paper text-3xl sm:text-4xl' : 'text-paper/40 text-xs sm:text-sm'}`}
               >
-                {result.value || '—'}
+                {result.value || getNoChapterMessage(result.sourceType, t)}
               </motion.span>
             ) : (
               '?'
@@ -160,7 +209,7 @@ export function Converter({ titleId }: ConverterProps) {
                 {result.isFiller ? t('fillerLabel') : t('canonLabel')}
               </span>
               <span className="px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl text-[9px] sm:text-[10px] uppercase tracking-widest bg-white/5 text-paper/40 border border-white/10 font-body">
-                {t('sourceLabel')}: {result.sourceType === 'original' ? tTitle('originalWork') : result.sourceType.replace('_', ' ')}
+                {t('sourceLabel')}: {formatSourceType(result.sourceType, tTitle)}
               </span>
             </motion.div>
           )}

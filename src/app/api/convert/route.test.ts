@@ -7,7 +7,8 @@ import { NextRequest } from 'next/server'
 const mockLimit = jest.fn()
 const mockOrderBy = jest.fn().mockReturnValue({ limit: mockLimit })
 const mockWhere = jest.fn().mockReturnValue({ orderBy: mockOrderBy })
-const mockFrom = jest.fn().mockReturnValue({ where: mockWhere })
+const mockInnerJoin = jest.fn().mockReturnValue({ where: mockWhere })
+const mockFrom = jest.fn().mockReturnValue({ innerJoin: mockInnerJoin, where: mockWhere })
 const mockSelect = jest.fn().mockReturnValue({ from: mockFrom })
 
 jest.mock('@/lib/db', () => ({
@@ -35,7 +36,8 @@ describe('GET /api/convert', () => {
   beforeEach(() => {
     jest.clearAllMocks()
     mockSelect.mockReturnValue({ from: mockFrom })
-    mockFrom.mockReturnValue({ where: mockWhere })
+    mockFrom.mockReturnValue({ innerJoin: mockInnerJoin, where: mockWhere })
+    mockInnerJoin.mockReturnValue({ where: mockWhere })
     mockWhere.mockReturnValue({ orderBy: mockOrderBy })
     mockOrderBy.mockReturnValue({ limit: mockLimit })
   })
@@ -58,7 +60,7 @@ describe('GET /api/convert', () => {
 
   it('should convert EP to Cap', async () => {
     mockLimit.mockResolvedValueOnce([
-      { episode: 5, chapter: 10, isFiller: false, isCanon: true, sourceType: 'manga' },
+      { episode: 5, chapter: 10, isFiller: false, isCanon: true, sourceType: 'manga', titleSource: 'Manga' },
     ])
 
     const request = new NextRequest(
@@ -74,7 +76,7 @@ describe('GET /api/convert', () => {
 
   it('should convert Cap to EP', async () => {
     mockLimit.mockResolvedValueOnce([
-      { episode: 5, chapter: 10, isFiller: false, isCanon: true, sourceType: 'manga' },
+      { episode: 5, chapter: 10, isFiller: false, isCanon: true, sourceType: 'manga', titleSource: 'Manga' },
     ])
 
     const request = new NextRequest(
@@ -88,21 +90,72 @@ describe('GET /api/convert', () => {
     expect(data.converted.value).toBe(5)
   })
 
-  it('should return 404 when no mapping is found', async () => {
-    mockLimit.mockResolvedValueOnce([])
+  it('should return 404 Not found when no mapping is found and not exceeding max', async () => {
+    mockLimit
+      .mockResolvedValueOnce([]) // First query (actual mapping)
+      .mockResolvedValueOnce([{ maxVal: 50 }]) // Second query (max available)
 
     const request = new NextRequest(
-      'http://localhost:3000/api/convert?type=ep&value=9999&title_id=20'
+      'http://localhost:3000/api/convert?type=ep&value=20&title_id=20'
     )
     const response = await GET(request)
+    const data = await response.json()
 
     expect(response.status).toBe(404)
+    expect(data.error).toBe('Not found')
   })
 
-  it('should prioritize manga source over light_novel and original', async () => {
-    // The mock returns manga first because of SQL ORDER BY priority
+  it('should return 404 ExceededMax when input exceeds max mapped value', async () => {
+    mockLimit
+      .mockResolvedValueOnce([]) // First query
+      .mockResolvedValueOnce([{ maxVal: 12 }]) // Second query
+
+    const request = new NextRequest(
+      'http://localhost:3000/api/convert?type=ep&value=13&title_id=20'
+    )
+    const response = await GET(request)
+    const data = await response.json()
+
+    expect(response.status).toBe(404)
+    expect(data.error).toBe('ExceededMax')
+    expect(data.maxAvailable).toBe(12)
+  })
+
+  // ─── BUG 1 & 2: sourceType should be derived from title.source ───
+
+  it('should derive sourceType "game" from titles.source "Game"', async () => {
     mockLimit.mockResolvedValueOnce([
-      { episode: 5, chapter: 10, isFiller: false, isCanon: true, sourceType: 'manga' },
+      { episode: 1, chapter: null, isFiller: false, isCanon: true, sourceType: 'manga', titleSource: 'Game' },
+    ])
+
+    const request = new NextRequest(
+      'http://localhost:3000/api/convert?type=ep&value=1&title_id=53631'
+    )
+    const response = await GET(request)
+    const data = await response.json()
+
+    expect(response.status).toBe(200)
+    expect(data.converted.sourceType).toBe('game')
+  })
+
+  it('should derive sourceType "light_novel" from titles.source "Light novel"', async () => {
+    mockLimit.mockResolvedValueOnce([
+      { episode: 1, chapter: 1, isFiller: false, isCanon: true, sourceType: 'manga', titleSource: 'Light novel' },
+    ])
+
+    const request = new NextRequest(
+      'http://localhost:3000/api/convert?type=ep&value=1&title_id=31240'
+    )
+    const response = await GET(request)
+    const data = await response.json()
+
+    expect(response.status).toBe(200)
+    expect(data.converted.sourceType).toBe('light_novel')
+  })
+
+  it('should derive sourceType "manga" from titles.source "Manga"', async () => {
+    mockLimit.mockResolvedValueOnce([
+      { episode: 5, chapter: 10, isFiller: false, isCanon: true, sourceType: 'manga', titleSource: 'Manga' },
     ])
 
     const request = new NextRequest(
@@ -113,5 +166,48 @@ describe('GET /api/convert', () => {
 
     expect(response.status).toBe(200)
     expect(data.converted.sourceType).toBe('manga')
+  })
+
+  it('should return "original" for titles with source "Original"', async () => {
+    mockLimit.mockResolvedValueOnce([
+      { episode: 1, chapter: null, isFiller: false, isCanon: true, sourceType: 'manga', titleSource: 'Original' },
+    ])
+
+    const request = new NextRequest(
+      'http://localhost:3000/api/convert?type=ep&value=1&title_id=99999'
+    )
+    const response = await GET(request)
+    const data = await response.json()
+
+    expect(response.status).toBe(200)
+    expect(data.converted.sourceType).toBe('original')
+  })
+
+  it('should return "unknown" when titles.source is null', async () => {
+    mockLimit.mockResolvedValueOnce([
+      { episode: 1, chapter: 1, isFiller: false, isCanon: true, sourceType: 'manga', titleSource: null },
+    ])
+
+    const request = new NextRequest(
+      'http://localhost:3000/api/convert?type=ep&value=1&title_id=12345'
+    )
+    const response = await GET(request)
+    const data = await response.json()
+
+    expect(response.status).toBe(200)
+    expect(data.converted.sourceType).toBe('unknown')
+  })
+
+  it('should use innerJoin with titles table', async () => {
+    mockLimit.mockResolvedValueOnce([
+      { episode: 1, chapter: 1, isFiller: false, isCanon: true, sourceType: 'manga', titleSource: 'Manga' },
+    ])
+
+    const request = new NextRequest(
+      'http://localhost:3000/api/convert?type=ep&value=1&title_id=20'
+    )
+    await GET(request)
+
+    expect(mockInnerJoin).toHaveBeenCalled()
   })
 })

@@ -12,11 +12,13 @@ interface TitleCardProps {
   status: string
   type: string
   index: number
+  hasMappings?: boolean
 }
 
-export function TitleCard({ id, name, slug, image, status, type, index }: TitleCardProps) {
+export function TitleCard({ id, name, slug, image, status, type, index, hasMappings }: TitleCardProps) {
   const tTypes = useTranslations('Types')
   const tStatus = useTranslations('Status')
+  const tConverter = useTranslations('Converter')
 
   const getStatusKey = (s: string) => {
     const low = s.toLowerCase()
@@ -58,6 +60,16 @@ export function TitleCard({ id, name, slug, image, status, type, index }: TitleC
               {tTypes(type?.toLowerCase() || 'anime')}
             </span>
           </div>
+
+          {/* Top-left badge for hasMappings */}
+          {hasMappings && (
+            <div className="absolute top-2 left-2 sm:top-3 sm:left-3">
+              <span className="text-[7px] sm:text-[9px] font-bold px-1.5 py-0.5 sm:px-2 sm:py-0.5 rounded-full bg-canon/20 backdrop-blur-md text-canon uppercase tracking-widest border border-canon/30 font-body flex items-center gap-0.5">
+                <svg className="w-2 h-2 sm:w-2.5 sm:h-2.5" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" /></svg>
+                {tConverter('hasMappings')}
+              </span>
+            </div>
+          )}
         </div>
 
         <div className="p-3 sm:p-5 flex-1 flex flex-col bg-surface">

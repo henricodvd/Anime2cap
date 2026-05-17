@@ -39,7 +39,8 @@
     "readMore": "Ler Mais",
     "showLess": "Mostrar Menos",
     "seoTitleSuffix": "Episódio para Capítulo do Mangá - Onde Ler? | Anime2Cap",
-    "defaultDescription": "Descubra exatamente qual capítulo do mangá corresponde ao episódio do anime. Onde começar a ler após o anime? Guia completo de mapeamento e fillers. ✓ Clique aqui!"
+    "defaultDescription": "Descubra exatamente qual capítulo do mangá corresponde ao episódio do anime. Onde começar a ler após o anime? Guia completo de mapeamento e fillers. ✓ Clique aqui!",
+    "converterTitle": "Conversor Rápido"
   },
   "Converter": {
     "title": "Conversor Rápido",
@@ -52,7 +53,13 @@
     "errorNotFound": "Ainda não mapeamos este ponto. Tenta outro!",
     "fillerLabel": "Filler detectado — pode pular",
     "canonLabel": "Episódio Canon",
-    "sourceLabel": "Fonte"
+    "sourceLabel": "Fonte",
+    "noChapterOriginal": "Obra original — sem capítulo de mangá",
+    "noChapterNovel": "Sem capítulo de mangá mapeado",
+    "noChapterUnavailable": "Capítulo ainda não disponível",
+    "errorExceededMaxEp": "Este anime só possui {max} episódios mapeados.",
+    "errorExceededMaxCap": "Este anime só possui {max} capítulos mapeados.",
+    "hasMappings": "Tem dados"
   },
   "EpisodeList": {
     "noFillers": "Este anime não possui episódios filler mapeados. Aproveite a maratona canon!",

@@ -39,7 +39,8 @@
     "readMore": "Read More",
     "showLess": "Show Less",
     "seoTitleSuffix": "Episode to Manga Chapter - Where to Read? | Anime2Cap",
-    "defaultDescription": "Find out exactly which manga chapter corresponds to the anime episode. Where to start reading after the anime? Complete mapping and filler guide. ✓ Click here!"
+    "defaultDescription": "Find out exactly which manga chapter corresponds to the anime episode. Where to start reading after the anime? Complete mapping and filler guide. ✓ Click here!",
+    "converterTitle": "Quick Converter"
   },
   "Converter": {
     "title": "Quick Converter",
@@ -52,7 +53,13 @@
     "errorNotFound": "We haven't mapped this point yet. Try another!",
     "fillerLabel": "Filler detected — skip it",
     "canonLabel": "Canon Episode",
-    "sourceLabel": "Source"
+    "sourceLabel": "Source",
+    "noChapterOriginal": "Original work — no manga chapter",
+    "noChapterNovel": "No manga chapter mapped",
+    "noChapterUnavailable": "Chapter not yet available",
+    "errorExceededMaxEp": "This anime only has {max} mapped episodes so far.",
+    "errorExceededMaxCap": "This anime only has {max} mapped chapters so far.",
+    "hasMappings": "Has data"
   },
   "EpisodeList": {
     "noFillers": "This anime doesn't have filler episodes mapped yet. Enjoy the canon marathon!",

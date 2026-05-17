@@ -81,6 +81,7 @@ async function main() {
       status: animeMetadata.status?.toLowerCase().includes('fin') ? 'finished' : 'ongoing',
       synopsis: animeMetadata.synopsis,
       score: animeMetadata.score?.toString(),
+      source: animeMetadata.source,
     })
   }
 
@@ -131,7 +132,7 @@ async function main() {
     console.log('✅ Dry run complete. No data saved.')
   } else {
     console.log('💾 Saving to database...')
-    await saveMappings(malId, allMappings)
+    await saveMappings(malId, allMappings, animeMetadata.source)
     console.log('✅ Ingestion complete!')
   }
 }

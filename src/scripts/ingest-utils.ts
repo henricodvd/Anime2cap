@@ -174,6 +174,7 @@ export async function saveTitle(titleData: {
   status?: 'ongoing' | 'finished' | 'upcoming'
   synopsis?: string
   score?: string
+  source?: string
 }): Promise<void> {
   const { titles } = await import('@/db/schema')
   await db.insert(titles).values({
@@ -186,15 +187,35 @@ export async function saveTitle(titleData: {
     status: titleData.status,
     synopsis: titleData.synopsis,
     score: titleData.score,
+    source: titleData.source,
   }).onConflictDoUpdate({
     target: [titles.id],
     set: {
       name: titleData.name,
       episodes: titleData.episodes,
       status: titleData.status,
+      source: titleData.source,
       updatedAt: new Date(),
     }
   })
+}
+
+/**
+ * Maps Jikan source strings to our source_type enum values.
+ */
+function mapSourceToEnum(source: string | null | undefined): string {
+  if (!source) return 'unknown'
+  const s = source.toLowerCase()
+  if (s.includes('4-koma') || s.includes('web manga')) return 'manga'
+  if (s.includes('light novel')) return 'light_novel'
+  if (s.includes('web novel')) return 'web_novel'
+  if (s.includes('visual novel')) return 'visual_novel'
+  if (s.includes('novel')) return 'novel'
+  if (s.includes('manga')) return 'manga'
+  if (s.includes('game')) return 'game'
+  if (s.includes('original')) return 'original'
+  if (s.includes('other')) return 'other'
+  return 'unknown'
 }
 
 /**
@@ -202,9 +223,12 @@ export async function saveTitle(titleData: {
  */
 export async function saveMappings(
   titleId: number,
-  mappingsData: IngestMapping[]
+  mappingsData: IngestMapping[],
+  sourceType?: string
 ): Promise<void> {
   if (mappingsData.length === 0) return
+
+  const resolvedSourceType = mapSourceToEnum(sourceType)
 
   const values = mappingsData.map(m => {
     if (m.episode === null || m.episode === undefined || isNaN(Number(m.episode))) {
@@ -214,7 +238,6 @@ export async function saveMappings(
 
     let chapterVal: string | null = null;
     if (m.chapter != null) {
-      // Try to parse chapter. The AI or scraper might return strings like "Heart of a Fire Soldier"
       const parsedCh = Number(m.chapter);
       if (!isNaN(parsedCh)) {
         chapterVal = parsedCh.toString();
@@ -229,6 +252,7 @@ export async function saveMappings(
       chapter: chapterVal,
       isFiller: m.isFiller ?? false,
       isCanon: !(m.isFiller ?? false),
+      sourceType: resolvedSourceType as any,
     };
   }).filter((v): v is NonNullable<typeof v> => v !== null)
 
@@ -239,6 +263,7 @@ export async function saveMappings(
     set: {
       isFiller: sql`excluded.is_filler`,
       isCanon: sql`excluded.is_canon`,
+      sourceType: sql`excluded.source_type`,
     }
   })
 }

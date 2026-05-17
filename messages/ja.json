@@ -39,7 +39,8 @@
     "readMore": "続きを読む",
     "showLess": "閉じる",
     "seoTitleSuffix": "マンガのどこから読む？ | Anime2Cap",
-    "defaultDescription": "アニメのエピソードに対応するマンガの章を確認。フィラー、カノン、完全読書ガイドを掲載しています。"
+    "defaultDescription": "アニメのエピソードに対応するマンガの章を確認。フィラー、カノン、完全読書ガイドを掲載しています。",
+    "converterTitle": "クイックコンバーター"
   },
   "Converter": {
     "title": "クイックコンバーター",
@@ -52,7 +53,13 @@
     "errorNotFound": "まだマッピングされていません。別の値を試してください！",
     "fillerLabel": "フィラーを検出 — スキップ可能",
     "canonLabel": "カノンエピソード",
-    "sourceLabel": "ソース"
+    "sourceLabel": "ソース",
+    "noChapterOriginal": "オリジナル作品 — マンガの章なし",
+    "noChapterNovel": "マンガの章がマッピングされていません",
+    "noChapterUnavailable": "章はまだ利用できません",
+    "errorExceededMaxEp": "このアニメは現在{max}エピソードまでしかマッピングされていません。",
+    "errorExceededMaxCap": "このアニメは現在{max}章までしかマッピングされていません。",
+    "hasMappings": "データあり"
   },
   "EpisodeList": {
     "noFillers": "このアニメにはまだフィラーエピソードがマッピングされていません。カノンマラソンを楽しんでください！",

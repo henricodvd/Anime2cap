@@ -1,18 +1,32 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
-import { titles } from '@/db/schema'
+import { titles, mappings } from '@/db/schema'
 import { z } from 'zod'
 import slugify from 'slugify'
-import { ilike, sql } from 'drizzle-orm'
+import { ilike, sql, eq, inArray } from 'drizzle-orm'
 import { searchRateLimit } from '@/lib/ratelimit'
 
 const JIKAN_API_URL = process.env.JIKAN_API_URL || 'https://api.jikan.moe/v4'
 
-// 1. Zod Schema
+// Expanded regex: allow common anime title characters (., !, ', (), ×, ☆, etc.)
 const searchSchema = z.string()
   .min(2, "Query too short")
   .max(100, "Query too long")
-  .regex(/^[a-zA-Z0-9\s-_:]+$/, "Invalid characters in query")
+  .regex(/^[a-zA-Z0-9\s\-_:.!'()+×☆&,]+$/, "Invalid characters in query")
+
+// Type priority for sorting: lower = higher priority
+const TYPE_PRIORITY: Record<string, number> = {
+  anime: 1,
+  ona: 2,
+  movie: 3,
+  ova: 4,
+  special: 5,
+  music: 6,
+  manga: 7,
+  manhwa: 8,
+  donghua: 9,
+  light_novel: 10,
+}
 
 export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams
@@ -40,43 +54,60 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    // 3. DB Caching Check (Check local Postgres first)
+    // 3. DB Search — use pg_trgm similarity for fuzzy search + ILIKE fallback
     const dbResults = await db
       .select()
       .from(titles)
-      .where(ilike(titles.name, `%${query}%`))
-      .orderBy(sql`${titles.updatedAt} DESC`)
-      .limit(10)
+      .where(
+        sql`(${titles.name} ILIKE ${'%' + query + '%'} OR similarity(${titles.name}, ${query}) > 0.15)`
+      )
+      .orderBy(
+        sql`similarity(${titles.name}, ${query}) DESC`
+      )
+      .limit(20)
 
-    // If we have results and they are fresh (e.g., < 7 days old)
+    // Check freshness
     const sevenDaysAgo = new Date()
     sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7)
 
     const freshResults = dbResults.filter(r => r.updatedAt && r.updatedAt > sevenDaysAgo)
     
-    if (freshResults.length > 0) {
-      // Safeguard: Re-map types if they are generically 'anime' but name implies otherwise
-      // This fixes stale data in the DB cache without needing a full re-fetch
-      const correctedResults = freshResults.map(r => {
-        if (r.type === 'anime') {
-          const name = r.name.toLowerCase()
-          if (name.includes('movie') || name.includes('film')) return { ...r, type: 'movie' }
-          if (name.includes('ova')) return { ...r, type: 'ova' }
-          if (name.includes('ona')) return { ...r, type: 'ona' }
-          if (name.includes('special')) return { ...r, type: 'special' }
-        }
-        return r
+    // Get IDs that have mappings for the "has data" badge
+    const titleIds = dbResults.map(r => r.id)
+    let mappingTitleIds = new Set<number>()
+    
+    if (titleIds.length > 0) {
+      const mappingResults = await db
+        .select({ titleId: mappings.titleId })
+        .from(mappings)
+        .where(inArray(mappings.titleId, titleIds))
+        .groupBy(mappings.titleId)
+      
+      mappingTitleIds = new Set(mappingResults.map(r => r.titleId))
+    }
+
+    if (freshResults.length >= 3) {
+      // Enough fresh results — return sorted by type priority + hasMappings
+      const enrichedResults = freshResults.map(r => ({
+        ...r,
+        hasMappings: mappingTitleIds.has(r.id),
+      }))
+
+      // Sort: hasMappings first, then by type priority
+      enrichedResults.sort((a, b) => {
+        if (a.hasMappings !== b.hasMappings) return a.hasMappings ? -1 : 1
+        return (TYPE_PRIORITY[a.type] ?? 99) - (TYPE_PRIORITY[b.type] ?? 99)
       })
 
       // Deduplicate by ID
-      const uniqueDbResults = correctedResults.filter((v, i, a) => a.findIndex(t => t.id === v.id) === i)
+      const uniqueDbResults = enrichedResults.filter((v, i, a) => a.findIndex(t => t.id === v.id) === i)
       
-      return NextResponse.json({ results: uniqueDbResults })
+      return NextResponse.json({ results: uniqueDbResults.slice(0, 20) })
     }
 
-    // 4. Jikan Fallback
+    // 4. Jikan Fallback — not enough fresh local results
     const response = await fetch(
-      `${JIKAN_API_URL}/anime?q=${encodeURIComponent(query)}&limit=10`
+      `${JIKAN_API_URL}/anime?q=${encodeURIComponent(query)}&limit=15`
     )
 
     if (!response.ok) {
@@ -128,8 +159,35 @@ export async function GET(request: NextRequest) {
       }
     }
 
+    // Merge Jikan results with mapping data
+    const jikanIds = results.map((r: any) => r.id)
+    let jikanMappingIds = new Set<number>()
+    if (jikanIds.length > 0) {
+      try {
+        const jikanMappings = await db
+          .select({ titleId: mappings.titleId })
+          .from(mappings)
+          .where(inArray(mappings.titleId, jikanIds))
+          .groupBy(mappings.titleId)
+        jikanMappingIds = new Set(jikanMappings.map((r: any) => r.titleId))
+      } catch {
+        // Non-critical
+      }
+    }
+
+    const enrichedJikanResults = results.map((r: any) => ({
+      ...r,
+      hasMappings: jikanMappingIds.has(r.id),
+    }))
+
+    // Sort: hasMappings first, then by type priority
+    enrichedJikanResults.sort((a: any, b: any) => {
+      if (a.hasMappings !== b.hasMappings) return a.hasMappings ? -1 : 1
+      return (TYPE_PRIORITY[a.type] ?? 99) - (TYPE_PRIORITY[b.type] ?? 99)
+    })
+
     // Deduplicate results by ID before returning
-    const uniqueResults = results.filter((v: any, i: number, a: any[]) => a.findIndex(t => t.id === v.id) === i)
+    const uniqueResults = enrichedJikanResults.filter((v: any, i: number, a: any[]) => a.findIndex(t => t.id === v.id) === i)
 
     return NextResponse.json({ results: uniqueResults })
   } catch (error) {

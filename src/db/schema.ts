@@ -33,6 +33,13 @@ export const sourceTypeEnum = pgEnum('source_type', [
   'manga',
   'light_novel',
   'original',
+  'game',
+  'visual_novel',
+  'novel',
+  'web_manga',
+  'web_novel',
+  'other',
+  'unknown',
 ])
 
 // ─── Tables ──────────────────────────────────────────────

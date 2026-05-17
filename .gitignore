@@ -48,4 +48,5 @@ yarn-error.log*
 # Sentry Config File
 .env.sentry-build-plugin
 
+# Mapping CSV para planilha do sheets
 animes_mappings.csv
