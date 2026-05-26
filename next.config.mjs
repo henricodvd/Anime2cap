@@ -41,16 +41,34 @@ const nextConfig = {
         headers: [
           {
             key: 'Content-Security-Policy',
-            value: [
-              "default-src 'self'",
-              "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://*.sentry.io https://*.clarity.ms https://pagead2.googlesyndication.com https://*.googlesyndication.com",
-              "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
-              "font-src 'self' https://fonts.gstatic.com",
-              "img-src 'self' data: https://myanimelist.net https://*.myanimelist.net https://*.jikan.moe https://*.clarity.ms https://pagead2.googlesyndication.com https://adservice.google.com",
-              "connect-src 'self' https://api.jikan.moe https://*.sentry.io https://*.google-analytics.com https://*.clarity.ms https://*.bing.com https://pagead2.googlesyndication.com https://ep1.adtrafficquality.google",
-              "frame-src 'self' https://googleads.g.doubleclick.net https://*.google.com https://*.googlesyndication.com",
-              "frame-ancestors 'none'",
-            ].join('; '),
+            value: (() => {
+              const isProd = process.env.NODE_ENV === 'production';
+              
+              // NOTE: 'unsafe-inline' is required in script-src for Google Analytics (GA4) and Microsoft Clarity 
+              // tracking script initialization, which are executed dynamically after user consent.
+              // 'unsafe-eval' is only allowed in development for Next.js Fast Refresh/HMR support.
+              const scriptSrc = [
+                "script-src 'self'",
+                "'unsafe-inline'",
+                !isProd && "'unsafe-eval'",
+                "https://www.googletagmanager.com",
+                "https://*.sentry.io",
+                "https://*.clarity.ms",
+                "https://pagead2.googlesyndication.com",
+                "https://*.googlesyndication.com"
+              ].filter(Boolean).join(' ');
+
+              return [
+                "default-src 'self'",
+                scriptSrc,
+                "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+                "font-src 'self' https://fonts.gstatic.com",
+                "img-src 'self' data: https://myanimelist.net https://*.myanimelist.net https://*.jikan.moe https://*.clarity.ms https://pagead2.googlesyndication.com https://adservice.google.com",
+                "connect-src 'self' https://api.jikan.moe https://*.sentry.io https://*.google-analytics.com https://*.clarity.ms https://*.bing.com https://pagead2.googlesyndication.com https://ep1.adtrafficquality.google",
+                "frame-src 'self' https://googleads.g.doubleclick.net https://*.google.com https://*.googlesyndication.com",
+                "frame-ancestors 'none'",
+              ].join('; ');
+            })(),
           },
           {
             key: 'X-Content-Type-Options',

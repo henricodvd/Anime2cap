@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import * as Sentry from '@sentry/nextjs'
 import { db } from '@/lib/db'
 import { mappings, titles } from '@/db/schema'
 import { eq, sql, and } from 'drizzle-orm'
@@ -123,6 +124,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({ converted })
   } catch (error) {
-    return NextResponse.json({ error: 'Failed to convert' }, { status: 500 })
+    Sentry.captureException(error)
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }

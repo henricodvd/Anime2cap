@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import * as Sentry from '@sentry/nextjs'
 import { db } from '@/lib/db'
 import { mappings } from '@/db/schema'
 import { z } from 'zod'
@@ -59,9 +60,9 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ inserted: items.length })
   } catch (error) {
-    console.error('[ADMIN MAPPINGS ERROR]', error)
+    Sentry.captureException(error)
     return NextResponse.json(
-      { error: 'Failed to insert mappings' },
+      { error: 'Internal server error' },
       { status: 500 }
     )
   }

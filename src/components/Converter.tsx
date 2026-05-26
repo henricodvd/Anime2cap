@@ -129,7 +129,7 @@ export function Converter({ titleId }: ConverterProps) {
             onKeyDown={(e) => e.key === 'Enter' && handleConvert()}
             placeholder={t('placeholder')}
             aria-label={`Enter ${direction === 'ep_to_cap' ? 'episode' : 'chapter'} number`}
-            className="w-full bg-night border border-white/5 rounded-2xl py-4 sm:py-5 px-4 text-2xl sm:text-3xl font-black text-paper placeholder-white/5 focus:outline-none focus:border-brand-cherry/40 focus:ring-1 focus:ring-brand-cherry/40 transition-all text-center font-heading"
+            className="w-full bg-night border border-white/5 rounded-2xl py-4 sm:py-5 px-4 text-2xl sm:text-3xl font-black text-paper placeholder-white/5 focus:outline-none focus:border-brand-cherry/40 focus:ring-1 focus:ring-brand-cherry/40 transition-all text-center font-heading clarity-mask"
           />
         </div>
 

@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import * as Sentry from '@sentry/nextjs'
 import { db } from '@/lib/db'
 import { titles } from '@/db/schema'
 import { z } from 'zod'
@@ -184,8 +185,9 @@ export async function GET(
 
     return NextResponse.json({ title: result })
   } catch (error) {
+    Sentry.captureException(error)
     return NextResponse.json(
-      { error: 'Failed to fetch title details' },
+      { error: 'Internal server error' },
       { status: 500 }
     )
   }

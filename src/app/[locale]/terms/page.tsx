@@ -26,6 +26,11 @@ export default async function TermsPage({ params }: { params: Promise<{ locale: 
             <h2 className="text-paper font-heading text-2xl font-bold mb-4 uppercase italic">{t('sec3Title')}</h2>
             <p>{t('sec3Content')}</p>
           </section>
+
+          <section>
+            <h2 className="text-paper font-heading text-2xl font-bold mb-4 uppercase italic">{t('sec4Title')}</h2>
+            <p>{t('sec4Content')}</p>
+          </section>
         </div>
       </div>
     </div>

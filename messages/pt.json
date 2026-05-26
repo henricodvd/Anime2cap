@@ -79,30 +79,38 @@
     "conversionDesc": "Mapeamos episódios e capítulos com foco em precisão absoluta, identificando o que é <canon>Cânon</canon> e o que é <filler>Filler</filler>.",
     "footerNote": "Nosso foco é a sua experiência. Sem jargões técnicos, sem distrações. Apenas a informação que você precisa para continuar sua jornada no mundo dos mangás."
   },
+  "CookieConsent": {
+    "title": "Privacidade e Cookies",
+    "description": "Usamos cookies e ferramentas de análise (Google Analytics, Microsoft Clarity) para melhorar sua experiência. Nenhum dado é coletado antes do seu consentimento.",
+    "accept": "Aceitar tudo",
+    "decline": "Recusar"
+  },
   "Privacy": {
     "title": "Política de Privacidade",
-    "effectiveDate": "Última atualização: 9 de Maio de 2026",
+    "effectiveDate": "Última atualização: 25 de Maio de 2026",
     "intro": "No Anime2Cap, levamos sua privacidade a sério. Esta política detalha como utilizamos ferramentas de análise para melhorar sua experiência.",
     "sec1Title": "1. Coleta de Dados e Ferramentas",
-    "sec1Content": "Utilizamos o Google Analytics 4 (GA4) para entender o tráfego do site e o Microsoft Clarity para analisar o comportamento do usuário através de mapas de calor e gravações de sessão anônimas.",
+    "sec1Content": "Utilizamos o Google Analytics 4 (GA4) para entender o tráfego do site e o Microsoft Clarity para analisar o comportamento do usuário através de mapas de calor e gravações de sessão completas (movimentos do mouse, cliques, scroll e texto digitado). Esses scripts só são carregados após seu consentimento explícito através do banner de cookies.",
     "sec2Title": "2. Cookies e Publicidade",
     "sec2Content": "Usamos cookies para fornecer funcionalidades essenciais e coletar dados analíticos. No futuro, poderemos exibir anúncios através do Google AdSense, que utiliza cookies para veicular anúncios com base em suas visitas anteriores.",
     "sec3Title": "3. Transparência",
     "sec3Content": "Os dados coletados são anônimos e focados em métricas de desempenho. Você pode optar por desativar cookies nas configurações do seu navegador a qualquer momento.",
     "sec4Title": "4. Serviços de Terceiros",
-    "sec4Content": "Dados de anime são providos via Jikan API. O processamento de monitoramento de erros é realizado pelo Sentry.io de forma segura.",
-    "sec5Title": "5. Seus Direitos",
-    "sec5Content": "Em conformidade com a LGPD e GDPR, garantimos que nenhum dado pessoal sensível é armazenado sem seu consentimento explícito."
+    "sec4Content": "Dados de anime são providos via Jikan API. O monitoramento de erros é realizado pelo Sentry.io com filtragem ativa de dados pessoais. O Google atua como operador de dados para analytics e publicidade — consulte a Política de Privacidade do Google em https://policies.google.com/privacy. Adicionalmente, logs de segurança (que contêm endereços IP para detectar e prevenir abusos, acessos suspeitos ou tentativas de invasão) são retidos por no máximo 90 dias com base em nosso legítimo interesse na segurança da plataforma, sendo descartados de forma definitiva após este prazo.",
+    "sec5Title": "5. Seus Direitos (LGPD)",
+    "sec5Content": "Em conformidade com a LGPD (Lei Geral de Proteção de Dados) e GDPR, garantimos que nenhum dado pessoal sensível é armazenado sem seu consentimento explícito. Você tem o direito de solicitar a exclusão de seus dados a qualquer momento entrando em contato pelo e-mail: pontuswebstudio@gmail.com."
   },
   "Terms": {
     "title": "Termos de Uso",
-    "effectiveDate": "Última atualização: 9 de Maio de 2026",
+    "effectiveDate": "Última atualização: 25 de Maio de 2026",
     "sec1Title": "1. Aceitação",
     "sec1Content": "Ao usar o Anime2Cap, você concorda com a coleta de dados analíticos anônimos conforme descrito em nossa Política de Privacidade.",
     "sec2Title": "2. Limitação de Responsabilidade",
     "sec2Content": "O Anime2Cap é uma ferramenta de informação. Não nos responsabilizamos por decisões tomadas com base nos dados de conversão, que são providos 'como estão'.",
     "sec3Title": "3. Uso Permitido",
-    "sec3Content": "É proibido o uso de bots ou scrapers para extrair dados massivos do nosso banco de dados sem autorização prévia."
+    "sec3Content": "É proibido o uso de bots ou scrapers para extrair dados massivos do nosso banco de dados sem autorização prévia.",
+    "sec4Title": "4. Contato e Remoção de Dados",
+    "sec4Content": "Em conformidade com a LGPD, você pode solicitar a exclusão, correção ou portabilidade dos seus dados a qualquer momento. Entre em contato pelo e-mail: pontuswebstudio@gmail.com."
   },
   "Footer": {
     "copyright": "© 2026 Anime2Cap",

@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import * as Sentry from '@sentry/nextjs'
 import { db } from '@/lib/db'
 import { titles, mappings } from '@/db/schema'
 import { z } from 'zod'
@@ -191,9 +192,9 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({ results: uniqueResults })
   } catch (error) {
-    console.error('[SEARCH ERROR]', error instanceof Error ? error.message : 'Unknown error')
+    Sentry.captureException(error)
     return NextResponse.json(
-      { error: 'Failed to fetch data' },
+      { error: 'Internal server error' },
       { status: 500 }
     )
   }

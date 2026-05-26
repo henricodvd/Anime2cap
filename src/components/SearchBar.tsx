@@ -45,7 +45,7 @@ export function SearchBar({ onSearch, isLoading = false, className = '', placeho
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder={placeholder}
-          className={`w-full bg-transparent border-none px-2 text-paper placeholder-paper/10 focus:outline-none focus:ring-0 font-body ${small ? 'text-sm' : 'text-xl'}`}
+          className={`w-full bg-transparent border-none px-2 text-paper placeholder-paper/10 focus:outline-none focus:ring-0 font-body clarity-mask ${small ? 'text-sm' : 'text-xl'}`}
         />
         {query && (
           <button 

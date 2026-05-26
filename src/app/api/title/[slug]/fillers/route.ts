@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import * as Sentry from '@sentry/nextjs'
 import { db } from '@/lib/db'
 import { mappings } from '@/db/schema'
 import { eq, and } from 'drizzle-orm'
@@ -27,9 +28,9 @@ export async function GET(
 
     return NextResponse.json({ fillers })
   } catch (error) {
-    console.error('[FILLERS ERROR]', error)
+    Sentry.captureException(error)
     return NextResponse.json(
-      { error: 'Failed to fetch fillers' },
+      { error: 'Internal server error' },
       { status: 500 }
     )
   }
