@@ -6,10 +6,9 @@ import { z } from 'zod'
 import slugify from 'slugify'
 import { eq, sql } from 'drizzle-orm'
 import { titleRateLimit } from '@/lib/ratelimit'
+import { jikanGet, JikanUnavailableError } from '@/lib/jikan-client'
 
 import { translateText } from '@/lib/translate'
-
-const JIKAN_API_URL = process.env.JIKAN_API_URL || 'https://api.jikan.moe/v4'
 
 // Feature flag for translation (set to false to save costs)
 const SHOULD_TRANSLATE = false
@@ -75,41 +74,60 @@ export async function GET(
 
     // If we have the full record (synopsis exists) and it's fresh
     if (titleRecord && titleRecord.synopsis && titleRecord.updatedAt && titleRecord.updatedAt > sevenDaysAgo) {
-      return NextResponse.json({ title: titleRecord })
+      const res = NextResponse.json({ title: titleRecord })
+      res.headers.set('X-Data-Source', 'db-cache')
+      return res
     }
 
-    // 4. Jikan Fallback
+    // 4. Jikan Fallback — via centralized client with throttle + circuit breaker
     let anime = null
+    let jikanAvailable = true
     
     // If we have a lookupId from the URL or a record in the DB (even if stale/incomplete)
     // always use the ID for the Jikan lookup to avoid fuzzy search collisions
     const effectiveId = lookupId || (titleRecord?.id)
 
-    if (effectiveId) {
-      // Direct lookup by MAL ID - absolute precision
-      const response = await fetch(`${JIKAN_API_URL}/anime/${effectiveId}`)
-      if (response.ok) {
-        const data = await response.json()
-        anime = data.data
-      } else if (response.status !== 404) {
-        throw new Error(`Jikan API error: ${response.status}`)
+    try {
+      if (effectiveId) {
+        // Direct lookup by MAL ID - absolute precision
+        const response = await jikanGet(`/anime/${effectiveId}`)
+        if (response.ok) {
+          const data = await response.json()
+          anime = data.data
+        }
+        // 404 → anime simply doesn't exist on Jikan
+      } else {
+        // Search by name query using the slug - only as a last resort
+        const query = lookupSlug.replace(/-/g, ' ')
+        const response = await jikanGet(`/anime?q=${encodeURIComponent(query)}&limit=10`)
+        if (response.ok) {
+          const data = await response.json()
+          const jikanResults = data.data || []
+          
+          // Priority 1: Exact slug match
+          anime = jikanResults.find((a: any) => slugify(a.title, { lower: true, strict: true }) === lookupSlug)
+          
+          // Priority 2: Fallback to first result if no exact slug match
+          if (!anime) anime = jikanResults[0]
+        }
       }
-    } else {
-      // Search by name query using the slug - only as a last resort
-      const query = lookupSlug.replace(/-/g, ' ')
-      const response = await fetch(`${JIKAN_API_URL}/anime?q=${encodeURIComponent(query)}&limit=10`)
-      if (response.ok) {
-        const data = await response.json()
-        const jikanResults = data.data || []
-        
-        // Priority 1: Exact slug match
-        anime = jikanResults.find((a: any) => slugify(a.title, { lower: true, strict: true }) === lookupSlug)
-        
-        // Priority 2: Fallback to first result if no exact slug match
-        if (!anime) anime = jikanResults[0]
-      } else if (response.status !== 404) {
-        throw new Error(`Jikan API error: ${response.status}`)
+    } catch (err) {
+      // Jikan unavailable (429 exhausted, circuit open, etc.)
+      // Fall through to serve stale data if available
+      jikanAvailable = false
+      if (!(err instanceof JikanUnavailableError)) {
+        Sentry.captureException(err)
       }
+      if (!titleRecord) {
+        throw err
+      }
+    }
+
+    // 5. Stale data fallback — serve old DB data when Jikan is down
+    if (!anime && !jikanAvailable && titleRecord) {
+      const res = NextResponse.json({ title: titleRecord })
+      res.headers.set('X-Data-Source', 'db-stale')
+      return res
     }
     
     if (!anime) {
@@ -183,9 +201,13 @@ export async function GET(
       }
     }
 
-    return NextResponse.json({ title: result })
+    const res = NextResponse.json({ title: result })
+    res.headers.set('X-Data-Source', 'jikan')
+    return res
   } catch (error) {
-    Sentry.captureException(error)
+    if (!(error instanceof JikanUnavailableError)) {
+      Sentry.captureException(error)
+    }
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

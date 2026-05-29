@@ -6,8 +6,7 @@ import { z } from 'zod'
 import slugify from 'slugify'
 import { ilike, sql, eq, inArray } from 'drizzle-orm'
 import { searchRateLimit } from '@/lib/ratelimit'
-
-const JIKAN_API_URL = process.env.JIKAN_API_URL || 'https://api.jikan.moe/v4'
+import { jikanGet, JikanUnavailableError } from '@/lib/jikan-client'
 
 // Expanded regex: allow common anime title characters (., !, ', (), ×, ☆, etc.)
 const searchSchema = z.string()
@@ -107,92 +106,128 @@ export async function GET(request: NextRequest) {
     }
 
     // 4. Jikan Fallback — not enough fresh local results
-    const response = await fetch(
-      `${JIKAN_API_URL}/anime?q=${encodeURIComponent(query)}&limit=15`
-    )
+    let jikanAvailable = true
+    let enrichedJikanResults: any[] = []
 
-    if (!response.ok) {
-      throw new Error('Jikan API error')
-    }
+    try {
+      const response = await jikanGet(`/anime?q=${encodeURIComponent(query)}&limit=15`)
 
-    const data = await response.json()
+      if (!response.ok) {
+        // Non-retryable error from Jikan (e.g. 400) — skip Jikan results
+        jikanAvailable = false
+        if (dbResults.length === 0) {
+          return NextResponse.json(
+            { error: 'Internal server error' },
+            { status: 500 }
+          )
+        }
+      } else {
+        const data = await response.json()
 
-    const results = data.data.map((anime: any) => ({
-      id: anime.mal_id,
-      name: anime.title,
-      nameJapanese: anime.title_japanese,
-      slug: slugify(anime.title, { lower: true, strict: true }),
-      image: anime.images?.jpg?.image_url,
-      type: mapJikanType(anime.type),
-      status: mapJikanStatus(anime.status),
-    }))
+        const results = data.data.map((anime: any) => ({
+          id: anime.mal_id,
+          name: anime.title,
+          nameJapanese: anime.title_japanese,
+          slug: slugify(anime.title, { lower: true, strict: true }),
+          image: anime.images?.jpg?.image_url,
+          type: mapJikanType(anime.type),
+          status: mapJikanStatus(anime.status),
+        }))
 
-    // Upsert to cache
-    if (results.length > 0) {
-      try {
-        await db
-          .insert(titles)
-          .values(results.map((r: any) => ({
-            id: r.id,
-            name: r.name,
-            nameJapanese: r.nameJapanese,
-            slug: r.slug,
-            type: r.type as any,
-            image: r.image,
-            status: r.status as any,
-            updatedAt: new Date(),
-          })))
-          .onConflictDoUpdate({
-            target: titles.id,
-            set: {
-              name: sql`EXCLUDED.name`,
-              nameJapanese: sql`EXCLUDED.name_japanese`,
-              slug: sql`EXCLUDED.slug`,
-              type: sql`EXCLUDED.type`,
-              image: sql`EXCLUDED.image`,
-              status: sql`EXCLUDED.status`,
-              updatedAt: new Date(),
-            },
-          })
-      } catch {
-        // DB sync failure shouldn't block the request
-        console.warn('Failed to sync titles to local DB')
+        // Upsert to cache
+        if (results.length > 0) {
+          try {
+            await db
+              .insert(titles)
+              .values(results.map((r: any) => ({
+                id: r.id,
+                name: r.name,
+                nameJapanese: r.nameJapanese,
+                slug: r.slug,
+                type: r.type as any,
+                image: r.image,
+                status: r.status as any,
+                updatedAt: new Date(),
+              })))
+              .onConflictDoUpdate({
+                target: titles.id,
+                set: {
+                  name: sql`EXCLUDED.name`,
+                  nameJapanese: sql`EXCLUDED.name_japanese`,
+                  slug: sql`EXCLUDED.slug`,
+                  type: sql`EXCLUDED.type`,
+                  image: sql`EXCLUDED.image`,
+                  status: sql`EXCLUDED.status`,
+                  updatedAt: new Date(),
+                },
+              })
+          } catch {
+            // DB sync failure shouldn't block the request
+            console.warn('Failed to sync titles to local DB')
+          }
+        }
+
+        // Merge Jikan results with mapping data
+        const jikanIds = results.map((r: any) => r.id)
+        let jikanMappingIds = new Set<number>()
+        if (jikanIds.length > 0) {
+          try {
+            const jikanMappings = await db
+              .select({ titleId: mappings.titleId })
+              .from(mappings)
+              .where(inArray(mappings.titleId, jikanIds))
+              .groupBy(mappings.titleId)
+            jikanMappingIds = new Set(jikanMappings.map((r: any) => r.titleId))
+          } catch {
+            // Non-critical
+          }
+        }
+
+        enrichedJikanResults = results.map((r: any) => ({
+          ...r,
+          hasMappings: jikanMappingIds.has(r.id),
+        }))
+
+        // Sort: hasMappings first, then by type priority
+        enrichedJikanResults.sort((a: any, b: any) => {
+          if (a.hasMappings !== b.hasMappings) return a.hasMappings ? -1 : 1
+          return (TYPE_PRIORITY[a.type] ?? 99) - (TYPE_PRIORITY[b.type] ?? 99)
+        })
+      }
+    } catch (err) {
+      // Jikan unavailable (429 exhausted, circuit open, etc.)
+      jikanAvailable = false
+      if (!(err instanceof JikanUnavailableError)) {
+        Sentry.captureException(err)
+      }
+      if (dbResults.length === 0) {
+        throw err
       }
     }
 
-    // Merge Jikan results with mapping data
-    const jikanIds = results.map((r: any) => r.id)
-    let jikanMappingIds = new Set<number>()
-    if (jikanIds.length > 0) {
-      try {
-        const jikanMappings = await db
-          .select({ titleId: mappings.titleId })
-          .from(mappings)
-          .where(inArray(mappings.titleId, jikanIds))
-          .groupBy(mappings.titleId)
-        jikanMappingIds = new Set(jikanMappings.map((r: any) => r.titleId))
-      } catch {
-        // Non-critical
-      }
+    // 5. If Jikan was available and returned results, use them
+    if (jikanAvailable && enrichedJikanResults.length > 0) {
+      const uniqueResults = enrichedJikanResults.filter(
+        (v: any, i: number, a: any[]) => a.findIndex(t => t.id === v.id) === i
+      )
+      return NextResponse.json({ results: uniqueResults })
     }
 
-    const enrichedJikanResults = results.map((r: any) => ({
+    // 6. Jikan unavailable or empty — return whatever DB results we have (even stale)
+    const allDbResults = dbResults.map(r => ({
       ...r,
-      hasMappings: jikanMappingIds.has(r.id),
+      hasMappings: mappingTitleIds.has(r.id),
     }))
-
-    // Sort: hasMappings first, then by type priority
-    enrichedJikanResults.sort((a: any, b: any) => {
+    allDbResults.sort((a, b) => {
       if (a.hasMappings !== b.hasMappings) return a.hasMappings ? -1 : 1
       return (TYPE_PRIORITY[a.type] ?? 99) - (TYPE_PRIORITY[b.type] ?? 99)
     })
-
-    // Deduplicate results by ID before returning
-    const uniqueResults = enrichedJikanResults.filter((v: any, i: number, a: any[]) => a.findIndex(t => t.id === v.id) === i)
-
-    return NextResponse.json({ results: uniqueResults })
+    const uniqueDbResults = allDbResults.filter((v, i, a) => a.findIndex(t => t.id === v.id) === i)
+    return NextResponse.json({ results: uniqueDbResults.slice(0, 20) })
   } catch (error) {
-    Sentry.captureException(error)
+    if (!(error instanceof JikanUnavailableError)) {
+      Sentry.captureException(error)
+    }
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
