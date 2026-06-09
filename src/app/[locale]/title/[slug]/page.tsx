@@ -7,19 +7,16 @@ import { Synopsis } from '@/components/Synopsis'
 import { Metadata } from 'next'
 import { Breadcrumbs } from '@/components/Breadcrumbs'
 
+import { getTitleData } from '@/lib/title-service'
+
 // Fetch title details on the server side
 async function getTitle(slug: string, locale: string) {
-  // Use absolute URL since fetch is happening on the server
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
-  const res = await fetch(`${baseUrl}/api/title/${slug}?locale=${locale}`, { next: { revalidate: 3600 } })
-
-  if (!res.ok) {
-    if (res.status === 404) return null
+  try {
+    return await getTitleData(slug, locale)
+  } catch (error) {
+    console.error(`[getTitle] Error loading title data for slug "${slug}":`, error)
     return null
   }
-
-  const data = await res.json()
-  return data.title
 }
 
 // Dynamic Metadata generation for SEO
@@ -210,7 +207,7 @@ export default async function TitlePage({ params }: { params: Promise<{ slug: st
               </span>
             </div>
 
-            <Synopsis text={title.synopsis} noSynopsisText={t('noSynopsis')} />
+            <Synopsis text={title.synopsis || ''} noSynopsisText={t('noSynopsis')} />
           </div>
         </div>
 

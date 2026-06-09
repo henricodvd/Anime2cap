@@ -61,150 +61,16 @@ export async function GET(
   }
 
   try {
-    // 3. DB Caching Check (Check local Postgres first)
-    const dbResults = await db
-      .select()
-      .from(titles)
-      .where(lookupId ? eq(titles.id, lookupId) : eq(titles.slug, lookupSlug))
-      .limit(1)
+    const { getTitleData } = await import('@/lib/title-service')
+    const title = await getTitleData(slug, locale)
 
-    const titleRecord = dbResults[0]
-    const sevenDaysAgo = new Date()
-    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7)
-
-    // If we have the full record (synopsis exists) and it's fresh
-    if (titleRecord && titleRecord.synopsis && titleRecord.updatedAt && titleRecord.updatedAt > sevenDaysAgo) {
-      const res = NextResponse.json({ title: titleRecord })
-      res.headers.set('X-Data-Source', 'db-cache')
-      return res
-    }
-
-    // 4. Jikan Fallback — via centralized client with throttle + circuit breaker
-    let anime = null
-    let jikanAvailable = true
-    
-    // If we have a lookupId from the URL or a record in the DB (even if stale/incomplete)
-    // always use the ID for the Jikan lookup to avoid fuzzy search collisions
-    const effectiveId = lookupId || (titleRecord?.id)
-
-    try {
-      if (effectiveId) {
-        // Direct lookup by MAL ID - absolute precision
-        const response = await jikanGet(`/anime/${effectiveId}`)
-        if (response.ok) {
-          const data = await response.json()
-          anime = data.data
-        }
-        // 404 → anime simply doesn't exist on Jikan
-      } else {
-        // Search by name query using the slug - only as a last resort
-        const query = lookupSlug.replace(/-/g, ' ')
-        const response = await jikanGet(`/anime?q=${encodeURIComponent(query)}&limit=10`)
-        if (response.ok) {
-          const data = await response.json()
-          const jikanResults = data.data || []
-          
-          // Priority 1: Exact slug match
-          anime = jikanResults.find((a: any) => slugify(a.title, { lower: true, strict: true }) === lookupSlug)
-          
-          // Priority 2: Fallback to first result if no exact slug match
-          if (!anime) anime = jikanResults[0]
-        }
-      }
-    } catch (err) {
-      // Jikan unavailable (429 exhausted, circuit open, etc.)
-      // Fall through to serve stale data if available
-      jikanAvailable = false
-      if (!(err instanceof JikanUnavailableError)) {
-        Sentry.captureException(err)
-      }
-      if (!titleRecord) {
-        throw err
-      }
-    }
-
-    // 5. Stale data fallback — serve old DB data when Jikan is down
-    if (!anime && !jikanAvailable && titleRecord) {
-      const res = NextResponse.json({ title: titleRecord })
-      res.headers.set('X-Data-Source', 'db-stale')
-      return res
-    }
-    
-    if (!anime) {
+    if (!title) {
       return NextResponse.json({ error: 'Not found' }, { status: 404 })
     }
 
-    const generatedSlug = slugify(anime.title, { lower: true, strict: true })
-    
-    const result = {
-      id: anime.mal_id,
-      slug: generatedSlug,
-      name: anime.title,
-      nameJapanese: anime.title_japanese,
-      image: anime.images?.jpg?.image_url,
-      synopsis: anime.synopsis,
-      type: mapJikanType(anime.type),
-      status: mapJikanStatus(anime.status),
-      episodes: anime.episodes,
-      score: anime.score?.toString(),
-      source: anime.source,
-      updatedAt: new Date(),
-    }
-
-    // Upsert to cache
-    try {
-      await db
-        .insert(titles)
-        .values({
-          id: result.id,
-          name: result.name,
-          nameJapanese: result.nameJapanese,
-          slug: result.slug,
-          type: result.type as any,
-          image: result.image,
-          status: result.status as any,
-          synopsis: result.synopsis,
-          episodes: result.episodes,
-          score: result.score,
-          source: result.source,
-          updatedAt: new Date(),
-        })
-        .onConflictDoUpdate({
-          target: titles.id,
-          set: {
-            name: sql`EXCLUDED.name`,
-            nameJapanese: sql`EXCLUDED.name_japanese`,
-            slug: sql`EXCLUDED.slug`,
-            type: sql`EXCLUDED.type`,
-            image: sql`EXCLUDED.image`,
-            status: sql`EXCLUDED.status`,
-            synopsis: sql`EXCLUDED.synopsis`,
-            episodes: sql`EXCLUDED.episodes`,
-            score: sql`EXCLUDED.score`,
-            source: sql`EXCLUDED.source`,
-            updatedAt: new Date(),
-          },
-        })
-    } catch {
-      console.warn('Failed to sync title to local DB')
-    }
-
-    // Translation logic
-    if (SHOULD_TRANSLATE && locale && locale !== 'en' && result.synopsis) {
-      const cacheKey = `${result.id}-${locale}`
-      if (translationCache.has(cacheKey)) {
-        result.synopsis = translationCache.get(cacheKey)!
-      } else {
-        const translated = await translateText(result.synopsis, locale)
-        translationCache.set(cacheKey, translated)
-        result.synopsis = translated
-      }
-    }
-
-    const res = NextResponse.json({ title: result })
-    res.headers.set('X-Data-Source', 'jikan')
-    return res
+    return NextResponse.json({ title })
   } catch (error) {
+    console.error(`[API title] Error fetching title for slug "${slug}":`, error)
     if (!(error instanceof JikanUnavailableError)) {
       Sentry.captureException(error)
     }
