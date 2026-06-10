@@ -1,5 +1,7 @@
 import { Converter } from '@/components/Converter'
 import { EpisodeList } from '@/components/EpisodeList'
+import { RelatedAnime } from '@/components/RelatedAnime'
+import { AffiliateButtons } from '@/components/AffiliateButtons'
 import { notFound } from 'next/navigation'
 import { Star, Tv, BookOpen } from 'lucide-react'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
@@ -208,6 +210,11 @@ export default async function TitlePage({ params }: { params: Promise<{ slug: st
             </div>
 
             <Synopsis text={title.synopsis || ''} noSynopsisText={t('noSynopsis')} />
+
+            {/* Affiliate Section */}
+            <div className="mt-8 pt-6 border-t border-white/5 flex flex-col items-center md:items-start">
+              <AffiliateButtons titleId={title.id} />
+            </div>
           </div>
         </div>
 
@@ -227,6 +234,9 @@ export default async function TitlePage({ params }: { params: Promise<{ slug: st
           </div>
           <EpisodeList titleId={title.id} />
         </section>
+
+        {/* Related Anime Section */}
+        <RelatedAnime relations={title.related} locale={locale} />
 
         {/* FAQ Section for Featured Snippets */}
         <section className="mt-24 pt-24 border-t border-white/5" aria-labelledby="faq-heading">

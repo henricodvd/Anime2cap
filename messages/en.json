@@ -6,6 +6,9 @@
     "searchPlaceholder": "Search your favorite anime...",
     "errorSearch": "Failed to fetch results. Please try again.",
     "noResults": "We haven't mapped this title yet. Try the official name in English or Japanese.",
+    "featuredTitle": "Trending Now",
+    "featuredTag": "Featured",
+    "featuredCta": "View Mapping",
     "features": {
       "mapping": "Manual Mapping",
       "filler": "Filler Identification"
@@ -40,7 +43,9 @@
     "showLess": "Show Less",
     "seoTitleSuffix": "Episode to Manga Chapter - Where to Read? | Anime2Cap",
     "defaultDescription": "Find out exactly which manga chapter corresponds to the anime episode. Where to start reading after the anime? Complete mapping and filler guide. ✓ Click here!",
-    "converterTitle": "Quick Converter"
+    "converterTitle": "Quick Converter",
+    "relatedTitle": "Related",
+    "affiliateSectionTitle": "Where to Watch & Read"
   },
   "Converter": {
     "title": "Quick Converter",

@@ -59,6 +59,13 @@ import { HomeClient } from '../app/[locale]/HomeClient';
 import React from 'react';
 
 describe('SEO & Performance Requirements', () => {
+  beforeAll(() => {
+    global.fetch = jest.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({ featured: [] }),
+    }) as any
+  })
+
   describe('Metadata (SEO)', () => {
     it('should use correct hreflang codes (en instead of en-US)', async () => {
       const params = Promise.resolve({ locale: 'pt' });

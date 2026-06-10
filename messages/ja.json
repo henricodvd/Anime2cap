@@ -6,6 +6,9 @@
     "searchPlaceholder": "お気に入りのアニメを検索...",
     "errorSearch": "結果の取得に失敗しました。もう一度お試しください。",
     "noResults": "このタイトルはまだマッピングされていません。英語または日本語の正式名称を試してください。",
+    "featuredTitle": "注目のアニメ",
+    "featuredTag": "注目",
+    "featuredCta": "マッピングを見る",
     "features": {
       "mapping": "マニュアルマッピング",
       "filler": "フィラー識別"
@@ -40,7 +43,9 @@
     "showLess": "閉じる",
     "seoTitleSuffix": "マンガのどこから読む？ | Anime2Cap",
     "defaultDescription": "アニメのエピソードに対応するマンガの章を確認。フィラー、カノン、完全読書ガイドを掲載しています。",
-    "converterTitle": "クイックコンバーター"
+    "converterTitle": "クイックコンバーター",
+    "relatedTitle": "関連作品",
+    "affiliateSectionTitle": "観る＆読む"
   },
   "Converter": {
     "title": "クイックコンバーター",

@@ -21,6 +21,7 @@ export interface TitleResult {
   episodes: number | null
   score: string | null
   source: string | null
+  related: any | null
   updatedAt: Date
 }
 
@@ -88,8 +89,8 @@ export async function getTitleData(slug: string, locale: string = 'en'): Promise
 
   try {
     if (effectiveId) {
-      // Direct lookup by MAL ID - absolute precision
-      const response = await jikanGet(`/anime/${effectiveId}`)
+      // Direct lookup by MAL ID - absolute precision, fetch full details for relations
+      const response = await jikanGet(`/anime/${effectiveId}/full`)
       if (response.ok) {
         const data = await response.json()
         anime = data.data
@@ -143,6 +144,7 @@ export async function getTitleData(slug: string, locale: string = 'en'): Promise
     episodes: anime.episodes || null,
     score: anime.score?.toString() || null,
     source: anime.source || null,
+    related: anime.relations || null,
     updatedAt: new Date(),
   }
 
@@ -162,6 +164,7 @@ export async function getTitleData(slug: string, locale: string = 'en'): Promise
         episodes: result.episodes,
         score: result.score,
         source: result.source,
+        related: result.related,
         updatedAt: new Date(),
       })
       .onConflictDoUpdate({
@@ -177,6 +180,7 @@ export async function getTitleData(slug: string, locale: string = 'en'): Promise
           episodes: sql`EXCLUDED.episodes`,
           score: sql`EXCLUDED.score`,
           source: sql`EXCLUDED.source`,
+          related: sql`EXCLUDED.related`,
           updatedAt: new Date(),
         },
       })

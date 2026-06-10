@@ -6,6 +6,9 @@
     "searchPlaceholder": "Pesquise seu anime favorito...",
     "errorSearch": "Falha ao buscar resultados. Tente novamente.",
     "noResults": "Ainda não mapeamos esse título. Tente o nome oficial em inglês ou japonês.",
+    "featuredTitle": "Em Destaque",
+    "featuredTag": "Destaque",
+    "featuredCta": "Ver Mapeamento",
     "features": {
       "mapping": "Mapeamento Manual",
       "filler": "Identificação de Fillers"
@@ -40,7 +43,9 @@
     "showLess": "Mostrar Menos",
     "seoTitleSuffix": "Episódio para Capítulo do Mangá - Onde Ler? | Anime2Cap",
     "defaultDescription": "Descubra exatamente qual capítulo do mangá corresponde ao episódio do anime. Onde começar a ler após o anime? Guia completo de mapeamento e fillers. ✓ Clique aqui!",
-    "converterTitle": "Conversor Rápido"
+    "converterTitle": "Conversor Rápido",
+    "relatedTitle": "Relacionados",
+    "affiliateSectionTitle": "Onde Ler & Assistir"
   },
   "Converter": {
     "title": "Conversor Rápido",
