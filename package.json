@@ -13,7 +13,7 @@
   "dependencies": {
     "@next/third-parties": "^15.1.7",
     "@radix-ui/react-slot": "^1.2.4",
-    "@sentry/nextjs": "^10.52.0",
+    "@sentry/nextjs": "^10.58.0",
     "@upstash/ratelimit": "^2.0.8",
     "@upstash/redis": "^1.37.0",
     "class-variance-authority": "^0.7.1",
