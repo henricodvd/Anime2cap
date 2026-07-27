@@ -24,7 +24,7 @@
     "drizzle-orm": "^0.45.2",
     "framer-motion": "^12.38.0",
     "lucide-react": "^1.14.0",
-    "next": "^15.5.18",
+    "next": "^15.5.22",
     "next-intl": "^4.11.0",
     "postgres": "^3.4.9",
     "react": "^18.3.1",
