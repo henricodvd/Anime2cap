@@ -8,7 +8,9 @@
     "start": "next start",
     "lint": "next lint",
     "test": "jest",
-    "test:watch": "jest --watch"
+    "test:watch": "jest --watch",
+    "check-updates": "tsx src/scripts/check-updates.ts",
+    "ingest": "tsx src/scripts/ingest-title-data.ts"
   },
   "dependencies": {
     "@next/third-parties": "^15.1.7",

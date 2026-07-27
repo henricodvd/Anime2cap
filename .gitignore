@@ -1,52 +1,64 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
-
-# dependencies
+# Dependencies
 /node_modules
 /.pnp
 .pnp.js
 .yarn/install-state.gz
 
-# testing
+# Testing
 /coverage
 
-# next.js
+# Next.js build output
 /.next/
 /out/
 
-# production
+# Production output
 /build
 
-# misc
+# Operating System & IDE files
 .DS_Store
-*.pem
+Thumbs.db
+Desktop.ini
+*.icns
+*.ico
+.vscode/
+.idea/
+*.swp
+*.swo
 
-# debug
+# Security & Private Keys / Certificates
+*.pem
+*.key
+*.crt
+*.pfx
+*.p12
+
+# Debug logs
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+pnpm-debug.log*
+*.log
 
-# local env files
+# Local environment files (DO NOT IGNORE .env.example)
 .env
 .env.local
-.env.test.local
-.env.example
+.env.*.local
 .env.production
+.env.staging
+.env.sentry-build-plugin
 
-# vercel
+# Vercel deployment
 .vercel
 
-# typescript
+# TypeScript build info
 *.tsbuildinfo
 
-# development and documentation
+# Internal tools, agent scratch & cache
 /scratch/
 /artifacts/
 /docs/
 /.opencode/
 /.swc/
 
-# Sentry Config File
-.env.sentry-build-plugin
-
-# Mapping CSV para planilha do sheets
+# Local data & CSV files
 animes_mappings.csv
