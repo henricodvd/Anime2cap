@@ -10,6 +10,7 @@ const __dirname = dirname(__filename);
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  output: 'standalone',
   outputFileTracingRoot: __dirname,
   images: {
     remotePatterns: [
@@ -132,9 +133,9 @@ const nextConfig = {
         headers: [
           {
             key: 'Access-Control-Allow-Origin',
-            value: process.env.NODE_ENV === 'production'
+            value: process.env.NEXT_PUBLIC_APP_URL || (process.env.NODE_ENV === 'production'
               ? 'https://anime2cap.com'
-              : 'http://localhost:3000',
+              : 'http://localhost:3000'),
           },
           {
             key: 'Access-Control-Allow-Methods',

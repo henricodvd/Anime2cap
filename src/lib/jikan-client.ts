@@ -153,7 +153,7 @@ export async function jikanFetch(url: string): Promise<Response> {
   for (let attempt = 0; attempt < MAX_RETRIES; attempt++) {
     try {
       const response = await fetch(url, {
-        signal: AbortSignal.timeout(10_000), // 10s timeout per attempt
+        signal: AbortSignal.timeout(15_000), // 15s timeout per attempt
       })
 
       // Success — reset circuit

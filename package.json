@@ -12,6 +12,9 @@
     "check-updates": "tsx src/scripts/check-updates.ts",
     "ingest": "tsx src/scripts/ingest-title-data.ts"
   },
+  "engines": {
+    "node": ">=20.0.0"
+  },
   "dependencies": {
     "@next/third-parties": "^15.1.7",
     "@radix-ui/react-slot": "^1.2.4",
@@ -29,6 +32,7 @@
     "postgres": "^3.4.9",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "sharp": "^0.33.5",
     "slugify": "^1.6.9",
     "tailwind-merge": "^3.5.0",
     "zod": "^4.4.3"

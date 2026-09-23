@@ -2,15 +2,22 @@ import { MetadataRoute } from 'next';
 import { db } from '@/lib/db';
 import { titles } from '@/db/schema';
 import { routing } from '@/i18n/routing';
+import * as Sentry from '@sentry/nextjs';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://anime2cap.com';
   
   // 1. Fetch all anime slugs from database
-  const allAnimes = await db.select({ 
-    slug: titles.slug,
-    updatedAt: titles.updatedAt 
-  }).from(titles);
+  let allAnimes: Array<{ slug: string; updatedAt: Date | null }> = [];
+  try {
+    allAnimes = await db.select({ 
+      slug: titles.slug,
+      updatedAt: titles.updatedAt 
+    }).from(titles);
+  } catch (error) {
+    console.warn('[sitemap] Failed to fetch titles from database during build, falling back to static entries:', error);
+    Sentry.captureException(error, { tags: { context: 'sitemap-generation' } });
+  }
 
   const locales = routing.locales;
   const staticPages = ['', '/about', '/privacy', '/terms'];

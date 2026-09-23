@@ -1,0 +1,27 @@
+services:
+  anime2cap:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: anime2cap
+    restart: unless-stopped
+    env_file:
+      - .env
+    networks:
+      - proxy-net
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.anime2cap.rule=Host(`SEU_DOMINIO_AQUI`)"
+      - "traefik.http.routers.anime2cap.entrypoints=websecure"
+      - "traefik.http.routers.anime2cap.tls.certresolver=letsencrypt"
+      - "traefik.http.services.anime2cap.loadbalancer.server.port=3000"
+    healthcheck:
+      test: ["CMD-SHELL", "node -e \"require('http').get('http://localhost:3000/api/health', (r) => {if (r.statusCode !== 200) process.exit(1);});\""]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+networks:
+  proxy-net:
+    external: true

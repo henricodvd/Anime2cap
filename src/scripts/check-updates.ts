@@ -109,7 +109,8 @@ async function main() {
         }
       }
     } catch (err) {
-      console.error(`   ❌ Erro ao processar MAL ID ${title.id}:`, err)
+      const msg = err instanceof Error ? err.message : String(err)
+      console.warn(`   ⚠️ Jikan indisponível ou lento para MAL ID ${title.id} ("${title.name}"). Pulando... (${msg})`)
     }
 
     // Rate limit preventivo para a API pública do Jikan (3 req/s max)

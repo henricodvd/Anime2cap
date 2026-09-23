@@ -75,7 +75,8 @@ O **Anime2Cap** resolve esse problema através de:
 
 | Serviço | Função no Projeto |
 | :--- | :--- |
-| **[Vercel](https://vercel.com/)** | Hospedagem principal da aplicação web, deploys contínuos via Git e Edge Network. |
+| **[Docker / VPS (Oracle Cloud)](https://www.oracle.com/cloud/)** | Hospedagem em container Docker standalone com proxy reverso Traefik. |
+| **[Cloudflare](https://www.cloudflare.com/)** | Gerenciamento de DNS, SSL/TLS, proxy CDN e proteção contra DDoS. |
 | **[Supabase](https://supabase.com/)** | Banco de dados relacional PostgreSQL de alta disponibilidade. |
 | **[Upstash Redis](https://upstash.com/)** | Armazenamento em memória Serverless para cache e proteção por Rate Limit. |
 | **[Sentry](https://sentry.io/)** | Monitoramento de erros, rastreamento de exceções e relatórios de performance. |
@@ -89,12 +90,13 @@ O **Anime2Cap** resolve esse problema através de:
 ## 💻 Guia de Instalação e Execução Local
 
 ### **Pré-requisitos**
-- **Node.js**: `v18.x` ou superior
+- **Node.js**: `v20.x` ou superior
 - **npm** (ou `yarn` / `pnpm`)
+- **Docker & Docker Compose** (para testes em container)
 - Instância do **PostgreSQL** (ou conta gratuita no Supabase)
 - Instância do **Upstash Redis** (opcional para ambiente local de dev)
 
-### **Passo a Passo**
+### **Passo a Passo (Desenvolvimento Local)**
 
 1. **Clonar o Repositório:**
    ```bash
@@ -124,6 +126,21 @@ O **Anime2Cap** resolve esse problema através de:
    npm run dev
    ```
    Acesse no seu navegador: [http://localhost:3000](http://localhost:3000)
+
+### **Passo a Passo (Build & Execução em Container Docker)**
+
+1. **Criar a rede externa do Traefik / Proxy (se ainda não existir):**
+   ```bash
+   docker network create proxy-net
+   ```
+
+2. **Construir e Iniciar o Container:**
+   ```bash
+   docker compose up -d --build
+   ```
+
+3. **Verificar a saúde da aplicação:**
+   Acesse [http://localhost:3000/api/health](http://localhost:3000/api/health) ou via `docker ps`.
 
 ### **Scripts de Ingestão de Dados (CLI)**
 
